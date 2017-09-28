@@ -6,7 +6,8 @@ REQUIRES = [
     'pyyaml==3.12',
     'influxdb==4.1.1',
     'voluptuous==0.10.5',
-    'coloredlogs==7.3'
+    'coloredlogs==7.3',
+    'pytz==2017.2'
 ]
 
 PACKAGES = find_packages()

@@ -8,6 +8,7 @@ import yaml
 import coloredlogs
 import voluptuous as vol
 from typing import Any, Union, TypeVar, Sequence
+import pytz
 from datetime import datetime
 from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
 
@@ -18,8 +19,8 @@ LOGGER = logging.getLogger(__name__)
 
 def date_to_epoch(date):
     """Converts timestamp to epoch ns."""
-    dtobj = datetime.strptime(date, '%m/%d/%Y')
-    return round(dtobj.timestamp() * 1e9)
+    dtobj = pytz.utc.localize(datetime.strptime(date, '%m/%d/%Y'))
+    return dtobj.isoformat()
 
 def convert_value(value, txtype):
     """Converts value to +/- based on credit/debit transaction type."""
