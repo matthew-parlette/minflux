@@ -7,9 +7,12 @@ import argparse
 import yaml
 import coloredlogs
 import voluptuous as vol
-from typing import Any
+from typing import Any, Union, TypeVar, Sequence
 from datetime import datetime
 from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
+
+# typing typevar
+T = TypeVar('T')
 
 LOGGER = logging.getLogger(__name__)
 
@@ -49,6 +52,23 @@ def string(value: Any) -> str:
     if value is not None:
         return str(value)
     raise vol.Invalid('string value is None')
+
+def boolean(value: Any) -> bool:
+    """Validate and coerce a boolean value."""
+    if isinstance(value, str):
+        value = value.lower()
+        if value in ('1', 'true', 'yes', 'on', 'enable'):
+            return True
+        if value in ('0', 'false', 'no', 'off', 'disable'):
+            return False
+        raise vol.Invalid('invalid boolean value {}'.format(value))
+    return bool(value)
+
+def ensure_list(value: Union[T, Sequence[T]]) -> Sequence[T]:
+    """Wrap value in list if it is not one."""
+    if value is None:
+        return []
+    return value if isinstance(value, list) else [value]
     
 class Parser(object):
     """Argument parsing class."""

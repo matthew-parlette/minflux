@@ -1,6 +1,6 @@
 MAJOR_VERSION = 0
 MINOR_VERSION = 0
-PATCH_VERSION = 2
+PATCH_VERSION = '3.dev0'
 
 __version__ = '{}.{}.{}'.format(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
 
@@ -22,6 +22,11 @@ CONF_PORT = 'port'
 CONF_FILE = 'file'
 CONF_LOGGER = 'logger'
 CONF_LEVEL = 'level'
+CONF_NETSUM = 'net_sum'
+CONF_EXCLUDE = 'exclude'
+CONF_VENDOR = 'vendor'
+CONF_CATEGORY = 'category'
+CONF_ACCOUNT = 'account'
 
 #### ATTRIBUTES ####
 ATTR_DATE = 'date'

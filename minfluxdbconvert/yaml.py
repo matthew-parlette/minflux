@@ -5,10 +5,11 @@ import yaml
 import os
 import sys
 import voluptuous as vol
-from minfluxdbconvert.util import string
+from minfluxdbconvert.util import string, boolean, ensure_list
 from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER, CONF_PASSWORD,
                                     CONF_DBNAME, CONF_FILE, CONF_LOGGER, CONF_LEVEL,
-                                    CONF_INFLUX, CONF_MINT)
+                                    CONF_INFLUX, CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
+                                    CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +28,15 @@ SCHEMA = vol.Schema({
         vol.Schema({
             vol.Optional(CONF_FILE, default=''): string,
             vol.Optional(CONF_LEVEL, default=logging.INFO): string
+        }),
+    vol.Optional(CONF_NETSUM, default={}):
+        vol.Schema({
+            vol.Optional(CONF_EXCLUDE, default={}):
+                vol.Schema({
+                    vol.Optional(CONF_VENDOR, default=[]): ensure_list,
+                    vol.Optional(CONF_CATEGORY, default=[]): ensure_list,
+                    vol.Optional(CONF_ACCOUNT, default=[]): ensure_list
+                })
         })
 })
 
