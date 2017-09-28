@@ -14,14 +14,14 @@ from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER, CONF_PASSWO
 LOGGER = logging.getLogger(__name__)
 
 SCHEMA = vol.Schema({
-    CONF_INFLUX: vol.Schema({
+    vol.Required(CONF_INFLUX): vol.Schema({
         vol.Required(CONF_HOST): string,
         vol.Required(CONF_PORT): string,
         vol.Required(CONF_USER): string,
         vol.Required(CONF_PASSWORD): string,
         vol.Required(CONF_DBNAME): string
     }),
-    CONF_MINT: vol.Schema({
+    vol.Required(CONF_MINT): vol.Schema({
         vol.Required(CONF_FILE): string
     }),
     vol.Optional(CONF_LOGGER, default={CONF_FILE: '', CONF_LEVEL: 'INFO'}):
@@ -49,7 +49,7 @@ def load_yaml(directory):
     with open(config_file, 'r') as yamlfile:
         cfg = yaml.load(yamlfile)
     try:
-        LOGGER.debug(SCHEMA(cfg))
+        LOGGER.info(SCHEMA(cfg))
         return(SCHEMA(cfg))
     except vol.error.MultipleInvalid as e:
         LOGGER.error('Invalid configuration. {}'.format(e))

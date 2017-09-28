@@ -6,7 +6,7 @@ import logging
 from influxdb import InfluxDBClient
 import minfluxdbconvert.util as util
 import minfluxdbconvert.reader as reader
-from minfluxdbconvert.yaml import load_yaml
+import minfluxdbconvert.yaml as yaml
 from minfluxdbconvert.json import jsonify
 from minfluxdbconvert.const import (CONF_INFLUX, CONF_USER, CONF_PASSWORD, CONF_DBNAME,
                                     CONF_HOST, CONF_PORT, CONF_FILE, CONF_MINT, CONF_LOGGER,
@@ -26,7 +26,7 @@ def get_arguments():
 def main():
     """Start conversion."""
     args = get_arguments()
-    config = load_yaml(args[ARG_CONFIG])
+    config = yaml.load_yaml(args[ARG_CONFIG])
     util.set_loggers(LOGGER, file=config[CONF_LOGGER][CONF_FILE], level=config[CONF_LOGGER][CONF_LEVEL])
 
     source_file = config[CONF_MINT][CONF_FILE]

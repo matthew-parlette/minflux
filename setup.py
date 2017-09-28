@@ -2,8 +2,12 @@ from setuptools import setup, find_packages
 from minfluxdbconvert.const import (__version__, PROJECT_NAME, PROJECT_LICENSE,
                                   PROJECT_EMAIL, PROJECT_URL, PROJECT_AUTHOR)
 
-with open('./requirements.txt', 'r') as infile:
-    REQUIRES = infile.readlines()
+REQUIRES = [
+    'pyyaml==3.12',
+    'influxdb==4.1.1',
+    'voluptuous==0.10.5',
+    'coloredlogs==7.3'
+]
 
 PACKAGES = find_packages()
 
