@@ -1,6 +1,6 @@
 minfluxdb-convert
 ===================
-A python tool to take a transaction log from https://mint.co and convert it for import into an influxdb database
+A python tool to take a transaction log from https://mint.com and convert it for import into an influxdb database
 
 Disclaimer
 ==========
@@ -15,7 +15,7 @@ Install:
 ``cd minfluxdb-convert``
 ``python3 setup.py install``
 
-Create a configuration file called ``db.yaml`` with the following contents:
+Create a configuration file called ``config.yaml`` with the following contents:
 
 .. code:: yaml
 
@@ -28,8 +28,16 @@ Create a configuration file called ``db.yaml`` with the following contents:
 	mintcsv:
 		file: <location of csv file>
 
+Optionally, the logger can be customized by adding the following to your ``config.yaml``:
+
+.. code:: yaml
+    
+    logger:
+        file: <log file location> (optional)
+        level: <debug|info|warning|error|critical> (optional, default is info)
+
 Run converter tool:
-``mfdb <opts>``
+``mfdb --config=/loc/of/config/file [opts]``
 
 Available options:
 ``--skip-push`` just generates json file and does not push to database (useful for debug)
