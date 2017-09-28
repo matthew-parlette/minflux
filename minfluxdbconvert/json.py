@@ -24,7 +24,7 @@ def jsonify(config, csvfile):
         all_dates.append(date)
         json_entry = {'tags': {
                         'label': entry[headers[ATTR_LABELS]],
-                        'notes': entry[headers[ATTR_LABELS]],
+                        'notes': entry[headers[ATTR_NOTES]],
                         },
                       'time': date,
                       'fields': {
