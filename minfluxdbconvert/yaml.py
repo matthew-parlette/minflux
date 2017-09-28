@@ -1,11 +1,11 @@
 """Used to load and validate yaml config file."""
-import logging
-import coloredlogs
-import yaml
+
 import os
 import sys
+import logging
+import yaml
 import voluptuous as vol
-from minfluxdbconvert.util import string, boolean, ensure_list
+from minfluxdbconvert.util import string, ensure_list
 from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER, CONF_PASSWORD,
                                     CONF_DBNAME, CONF_FILE, CONF_LOGGER, CONF_LEVEL,
                                     CONF_INFLUX, CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
@@ -44,14 +44,14 @@ def load_yaml(directory):
     """Reads yaml file and returns result."""
     config_file = '{}/config.yaml'.format(directory)
     if not os.path.isfile(config_file):
-        LOGGER.error('{} is not a valid file'.format(config_file))
+        LOGGER.error('% is not a valid file', config_file)
         sys.exit(1)
     with open(config_file, 'r') as yamlfile:
         cfg = yaml.load(yamlfile)
     try:
         LOGGER.info(SCHEMA(cfg))
-        return(SCHEMA(cfg))
-    except vol.error.MultipleInvalid as e:
-        LOGGER.error('Invalid configuration. {}'.format(e))
+        return SCHEMA(cfg)
+    except vol.error.MultipleInvalid as err:
+        LOGGER.error('Invalid configuration. %s', err)
         sys.exit(1)
             

@@ -6,13 +6,14 @@ from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS, ATTR_NOTE
                                     ATTR_ACCOUNT, ATTR_CATEGORY, ATTR_TYPE, ATTR_AMOUNT)
 
 LOGGER = logging.getLogger(__name__)
-                                    
+
 class TransactionReader(object):
     """Class to parse transactions."""
 
     def __init__(self, csvfile):
         """Initialize class."""
-        self._data = self.read_csv(csvfile)
+        self._data = None
+        self.read_csv(csvfile)
         self._headers = {ATTR_DATE: None,
                          ATTR_DESC: None,
                          ATTR_LABELS: None,
@@ -21,15 +22,17 @@ class TransactionReader(object):
                          ATTR_CATEGORY: None,
                          ATTR_AMOUNT: None,
                          ATTR_TYPE: None
-                         }
+                        }
         self.get_headers()
 
     @property
     def headers(self):
+        """Returns header index dict."""
         return self._headers
 
     @property
     def data(self):
+        """Returns data read in from csv file."""
         return self._data
 
     def read_csv(self, csvfile):
@@ -39,7 +42,7 @@ class TransactionReader(object):
             txreader = csv.reader(txfile, delimiter=',', quotechar='"')
             for row in txreader:
                 data.append(row)
-        return data
+        self._data = data
 
     def get_headers(self):
         """Retrieve header data from csv input."""
@@ -49,8 +52,7 @@ class TransactionReader(object):
             key = item.lower()
             key = key.replace(' ', '_')
             self._headers[key] = header_line.index(item)
-        LOGGER.debug('Headers: {}'.format(self._headers))
+
+        LOGGER.debug('Headers: %s', self._headers)
         # Get rid of header line from data
         self._data.pop(0)
-
-
