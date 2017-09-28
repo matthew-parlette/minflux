@@ -1,5 +1,5 @@
 minfluxdb-convert |Build| |Coverage|
-===================
+=====================================
 A python tool to take a transaction log from https://mint.com and convert it for import into an influxdb database
 
 Disclaimer
