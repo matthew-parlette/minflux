@@ -6,51 +6,37 @@ import logging
 from influxdb import InfluxDBClient
 import minfluxdbconvert.util as util
 import minfluxdbconvert.reader as reader
+from minfluxdbconvert.yaml import load_yaml
+from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS, ATTR_NOTES,
+                                    ATTR_ACCOUNT, ATTR_CATEGORY, ATTR_TYPE, ATTR_AMOUNT)
+from minfluxdbconvert.const import (CONF_INFLUX, CONF_USER, CONF_PASSWORD, CONF_DBNAME,
+                                    CONF_HOST, CONF_PORT, CONF_FILE, CONF_MINT, CONF_LOGGER,
+                                    CONF_LEVEL)
+from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(logging.INFO)
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-LOGGER.addHandler(ch)
-
 
 def create_json_file(config, csvfile):
     """Converts csv from mint into json file."""
     Mint = reader.TransactionReader(csvfile)
     json_body = list()
     for entry in Mint.data:
-        value = util.convert_value(entry[Mint.headers['Amount']],
-                                   entry[Mint.headers['Transaction Type']]
-                                   )
-        json_entry = {'measurement': entry[Mint.headers['Category']],
+        value = util.convert_value(entry[Mint.headers[ATTR_AMOUNT]],
+                                   entry[Mint.headers[ATTR_TYPE]])
+        json_entry = {'measurement': entry[Mint.headers[ATTR_CATEGORY]],
                       'tags': {
-                          'vendor': entry[Mint.headers['Description']],
-                          'label': entry[Mint.headers['Labels']],
-                          'notes': entry[Mint.headers['Notes']],
-                          'account': entry[Mint.headers['Account Name']],
+                          'vendor': entry[Mint.headers[ATTR_DESC]],
+                          'label': entry[Mint.headers[ATTR_LABELS]],
+                          'notes': entry[Mint.headers[ATTR_NOTES]],
+                          'account': entry[Mint.headers[ATTR_ACCOUNT]],
                           },
-                      'time': util.date_to_epoch(entry[Mint.headers['Date']]),
+                      'time': util.date_to_epoch(entry[Mint.headers[ATTR_DATE]]),
                       'fields': {
                           'value': value
                           }
                       }
         json_body.append(json_entry)
     return json_body
-
-# TODO: Currently a terrible implementation and not working...
-def validate_config(config):
-    """Ensures yaml config file loaded properly."""
-    if ['influxdb', 'mintcsv'] is not config.keys():
-        LOGGER.error('Invalid config: Missing keys (requires both influxdb and mintcsv keys)')
-        sys.exit(1)
-    if ['host', 'port', 'dbname', 'user', 'password'] is not config['influxdb'].keys():
-        LOGGER.error('Invalid config: influxdb -> Missing required keys')
-        sys.exit(1)
-
-    # Check that mint file given is actually readable
-    if not os.path.isfile(config['mintcsv']['file']):
-        LOGGER.error('Invalid config: Given mintcsv transaction file cannot be found.')
-        sys.exit(1)
 
 def get_arguments():
     """Gets command line arguments."""
@@ -63,14 +49,14 @@ def get_arguments():
 def main():
     """Start conversion."""
     args = get_arguments()
-    config = util.load_yaml(args['db_cfg'])
-    #validate_config(config)
+    config = load_yaml(args[ARG_CONFIG])
+    util.set_loggers(LOGGER, file=config[CONF_LOGGER][CONF_FILE], level=config[CONF_LOGGER][CONF_LEVEL])
 
-    source_file = config['mintcsv']['file']
+    source_file = config[CONF_MINT][CONF_FILE]
 
     json_body = create_json_file(config, source_file)
 
-    if args['skip_push']:
+    if args[ARG_NOPUSH]:
         LOGGER.warn('Skipping database write.')
         json_info = json.dumps(json_body)
         with open('dump.json', 'w') as outfile:
@@ -78,18 +64,19 @@ def main():
         LOGGER.info('Data sent to {}/dump.json'.format(os.getcwd()))
         sys.exit()
     else:
-        host = config['influxdb']['host']
-        port = config['influxdb']['port']
-        db = config['influxdb']['dbname']
-        user = config['influxdb']['user']
-        password = config['influxdb']['password']
+        host = config[CONF_INFLUX][CONF_HOST]
+        port = config[CONF_INFLUX][CONF_PORT]
+        db = config[CONF_INFLUX][CONF_DBNAME]
+        user = config[CONF_INFLUX][CONF_USER]
+        password = config[CONF_INFLUX][CONF_PASSWORD]
 
         client = InfluxDBClient(host, port, user, password, dbname)
         client.write_points(json_body)
 
-    LOGGER.warn('Databse write successful! :)')
+    LOGGER.info('Databse write successful! :)')
     sys.exit()
 
 
 if __name__ == "__main__":
+    
     main()
