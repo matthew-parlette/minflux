@@ -1,0 +1,7 @@
+build/
+dist/
+*.yaml
+*.json
+*.csv
+*__pycache__*
+*.egg-info
