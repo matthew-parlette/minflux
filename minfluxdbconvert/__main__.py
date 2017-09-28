@@ -55,7 +55,7 @@ def main():
     source_file = config[CONF_MINT][CONF_FILE]
 
     json_body = create_json_file(config, source_file)
-
+    LOGGER.debug(json_body)
     if args[ARG_NOPUSH]:
         LOGGER.warn('Skipping database write.')
         json_info = json.dumps(json_body)

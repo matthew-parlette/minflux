@@ -36,7 +36,7 @@ class TransactionReader(object):
         """Reads the csv file."""
         data = list()
         with open(csvfile, newline='') as txfile:
-            txreader = csv.reader(txfile, delimiter=',', quotechar='\"')
+            txreader = csv.reader(txfile, delimiter=',', quotechar='"')
             for row in txreader:
                 data.append(row)
         return data
