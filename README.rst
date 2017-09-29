@@ -9,12 +9,18 @@ This module is currently under development and has not been thoroughly tested.  
 Usage
 =======
 Clone repo:
-``git clone https://github.com/fronzbot/minfluxdb-convert.git``
+
+.. code::bash
+
+    $ git clone https://github.com/fronzbot/minfluxdb-convert.git
 
 Install:
-``cd minfluxdb-convert``
-``python3 setup.py install``
 
+.. code::bash
+    
+    $ cd minfluxdb-convert
+    $ sudo python3 setup.py install
+    
 Create a configuration file called ``config.yaml`` with the following contents:
 
 .. code:: yaml
@@ -25,8 +31,9 @@ Create a configuration file called ``config.yaml`` with the following contents:
 		user: <db username>
 		password: <db password>
 		dbname: <name of db>
-	mintcsv:
+	mint:
 		file: <location of csv file>
+        directory: <directory of multiple csv files USE THIS OR FILE, NOT BOTH>
 
 Optionally, the logger can be customized by adding the following to your ``config.yaml``:
 
@@ -68,7 +75,18 @@ Another feature is the ability to retrieve a net sum across all measurements.  H
 
 If anything changes with what you need to exclude, you can always go in and re-generate the data (timestamps don't change so everything should be overwritten properly).  A future improvement would be to add a 'regenerate-all' flag that, given a directory, will regenerate all of the influxdb data for each csv in that directory.
 
+Additionally, the following line can be added to allow for archiving of processed csv files:
 
+.. code::yaml
+
+    mint:
+        ...
+        archive:
+            directory: <optional archive directory>
+        ...
+
+Once ``minfluxdb-convert`` writes your csv files to the database, the file will be compressed and moved the specified archive directory (defaults to a directory named ``archive`` in the directory where your csv files are, if not specified).
+        
 .. |Build| image:: https://travis-ci.org/fronzbot/minfluxdb-convert.svg?branch=master
    :target: https://travis-ci.org/fronzbot/minfluxdb-convert
 .. |Coverage| image:: https://coveralls.io/repos/github/fronzbot/minfluxdb-convert/badge.svg?branch=master
