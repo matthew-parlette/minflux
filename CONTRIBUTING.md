@@ -33,9 +33,11 @@ influxdb:
  dbname: test
 mint:
  file: /home/user/mint.csv
-``` If you do not have an InfluxDB instance you can push results to, you can simply use the `--skip-push` flag as an option when you run `minfluxdbconvert`.  This will run the whole script except for the write to an InfluxDB instance.  The data is instead dumped as a json file which can be used for debugging/verification.
+```
 
-#### An alternative is to install the package as if you were an end user.  This step would be required after every change, so it's more cumbersome than the previous method (but has the benefit of ensuring there are no dependency issues with your code).
+If you do not have an InfluxDB instance you can push results to, you can simply use the `--skip-push` flag as an option when you run `minfluxdbconvert`.  This will run the whole script except for the write to an InfluxDB instance.  The data is instead dumped as a json file which can be used for debugging/verification.
+
+### An alternative is to install the package as if you were an end user.  This step would be required after every change, so it's more cumbersome than the previous method (but has the benefit of ensuring there are no dependency issues with your code).
 
 ```bash
 $ sudo python3 setup.py install
@@ -51,10 +53,10 @@ minfluxdb-convert enforces [PEP8 style](https://www.python.org/dev/peps/pep-0008
 - No trailing whitespace.
 - No whitespace on empty lines.
 
-#### Other recommendations
+### Other recommendations
 Some styles are not enforced by PEP, but are required for your pull request to be accepted.  These extra style guidelines help to increase readability, so please make a conscious effort to follow them.
 
-###### QUOTES
+#### QUOTES
 Use single quotes `'` for single word and double quotes `"` for multi-word sentences.
 
 ```python
@@ -65,7 +67,7 @@ json_body = {
 }
 ```
 
-###### LOG MESSAGES
+#### LOG MESSAGES
 Logging formats are handled automatically, so adding extra log messages only need to be done as follows:
 
 ```python
@@ -87,7 +89,7 @@ $ tox
 
 It is *highly* recommended to run `tox` before submitting your PR to avoid annoying fixes.
 
-#### Running single tests
+### Running single tests
 In order to speed up development you can run specific tests (full test suite, only linting, etc.).  This is done via the `-e` flag and selecting an environment.  For example, `tox -e py35` runs unit tests in Python 3.5 and `tox -e lint` runs the linters only.
 
 If you are adding a new requirement in your code (and added it to the `requirements.txt` or `requirements_test.txt` file), you will need to regenerate the requirements for tox via the `-r` flag.  For example `tox -r` will run the full test suite and force regeneration of requirements.
@@ -101,7 +103,7 @@ $ tox -e py35 -- tests/test_main.py -x
 $ tox -e py35 -- tests/test_main.py -k test_no_arguments
 ```
 
-#### Notes on PyLint and PEP8
+### Notes on PyLint and PEP8
 If you simply cannot avoid a PyLint warning, you can add a comment to your code that will disable the warning like so: `# pylint: disable=YOUR-ERROR-NAME`
 
 ## Submitting your work
