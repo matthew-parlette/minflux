@@ -23,7 +23,7 @@ def date_to_epoch(date):
 def convert_value(value, txtype):
     """Converts value to +/- based on credit/debit transaction type."""
     txtype_map = {'credit': 1, 'debit': -1}
-    LOGGER.debug('Found amount %f of type %s', value, txtype)
+    LOGGER.debug('Found amount %s of type %s', value, txtype)
     return round(txtype_map[txtype] * float(value), 2)
 
 def set_loggers(logger, file=None, level='info'):

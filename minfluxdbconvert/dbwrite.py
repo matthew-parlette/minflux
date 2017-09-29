@@ -1,5 +1,4 @@
 """Module that handles writing to database."""
-import os
 import sys
 import logging
 import json
@@ -16,10 +15,10 @@ def influxdb_write(config, client, source, db_skip=False):
     if db_skip:
         LOGGER.warning('Skipping database write.')
         json_info = json.dumps(json_body)
-        with open('dump.json', 'w') as outfile:
+        with open('{}.json'.format(source), 'w') as outfile:
             json.dump(json_info, outfile)
-        LOGGER.info('Data sent to %s/dump.json', os.getcwd())
-        sys.exit()
+        LOGGER.info('Data sent to %s.json', source)
+        return True
 
     client.write_data(json_body)
 

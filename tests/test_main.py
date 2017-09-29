@@ -34,11 +34,10 @@ class TestMainModule(unittest.TestCase):
                 }
         }
         with mock.patch('sys.argv', test_args):
-            with self.assertRaises(SystemExit) as cm:
-                mock_fh = mock.mock_open()
-                with mock.patch('builtins.open', mock_fh, create=False):
-                    main.main()
-            self.assertEqual(cm.exception.code, None)        
+            mock_fh = mock.mock_open()
+            with mock.patch('builtins.open', mock_fh, create=False):
+                main.main()
+        self.assertEqual(mock_client.call_count, 1)      
 
     @mock.patch('minfluxdbconvert.__main__.glob.glob')
     def test_with_dir(self, mock_glob, mock_load_yaml, mock_client):
@@ -62,12 +61,10 @@ class TestMainModule(unittest.TestCase):
                 }
         }
         with mock.patch('sys.argv', test_args):
-            with self.assertRaises(SystemExit) as cm:
-                mock_fh = mock.mock_open()
-                with mock.patch('builtins.open', mock_fh, create=False):
-                    main.main()
-            self.assertEqual(mock_client.call_count, 3)
-            self.assertEqual(cm.exception.code, None)
+            mock_fh = mock.mock_open()
+            with mock.patch('builtins.open', mock_fh, create=False):
+                main.main()
+        self.assertEqual(mock_client.call_count, 3)
 
     @mock.patch('minfluxdbconvert.__main__.glob.glob')
     def test_bad_write(self, mock_glob, mock_load_yaml, mock_client):

@@ -35,26 +35,27 @@ def main():
     status = False
     try:
         source = config[CONF_MINT][CONF_FILE]
+        LOGGER.debug('Using single file %s', source)
         status = dbwrite.influxdb_write(config, db_client,
                                         source, db_skip=args[ARG_NOPUSH])
     except KeyError:
         source = config[CONF_MINT][CONF_DIR]
+        LOGGER.debug('Using source dir %s', source)
+        status = True
         for file in glob.glob('{}/*.csv'.format(source)):
+            LOGGER.debug('Found %s', file)
             result = dbwrite.influxdb_write(config, db_client,
                                             file, db_skip=args[ARG_NOPUSH])
             if not result:
                 LOGGER.error('Could not write %s to database', file)
-                sys.exit(1)
-        status = True
+                status = False
+                break
 
-    if status:
+    if status and not args[ARG_NOPUSH]:
         LOGGER.info('Databse write successful! :)')
-    else:
+    elif not status:
         LOGGER.error('Database write unsuccessful :(')
         sys.exit(1)
-
-    sys.exit()
-
 
 if __name__ == "__main__":
     main()

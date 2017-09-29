@@ -5,7 +5,7 @@ from minfluxdbconvert import json as json
 
 class MockReader(object):
     """Class used to mock the reader module."""
-    def __init__(self, file):
+    def __init__(self, file, archive=False, archive_dir=None):
         self.headers = {
             'date': 0,
             'description': 1,
@@ -19,7 +19,7 @@ class MockReader(object):
         self.data = [['1/1/1970', 'foo', 'bar', 'credit', '3.50', 'foocat', 'foolabel', 'barnote'],
                      ['1/2/1970', 'oof', 'rab', 'debit', '1.25', 'tacoof', 'lebaloof', 'etonrab']]
 
-class TestYamlLoad(unittest.TestCase):
+class TestJsonify(unittest.TestCase):
     """Test jsonify functionality."""
     
     def setUp(self):
@@ -111,3 +111,47 @@ class TestYamlLoad(unittest.TestCase):
         self.assertEqual(len(body), 7)
         self.assertEqual(body[-1]['measurement'], 'net_sum')
         self.assertEqual(body[-1]['fields']['value'], 2.25)        
+
+    @mock.patch('minfluxdbconvert.json.reader')
+    def test_archive_single_file_custom_dir(self, mock_reader):
+        """Verify we don't cause errors in this mode."""
+        mock_reader.TransactionReader = MockReader
+        config = {
+            'mint': {
+                'file': '/foo.csv',
+                'archive': {
+                    'directory': '/tmp'
+                }
+            }
+        }
+        body = json.jsonify(config, '/foo.csv')
+        self.assertEqual(len(body), 7)
+
+    @mock.patch('minfluxdbconvert.json.reader')
+    def test_archive_dir_custom_dir(self, mock_reader):
+        """Verify we don't cause errors in this mode."""
+        mock_reader.TransactionReader = MockReader
+        config = {
+            'mint': {
+                'directory': '/foo',
+                'archive': {
+                    'directory': '/tmp'
+                }
+            }
+        }
+        body = json.jsonify(config, '/foo/bar.csv')
+        self.assertEqual(len(body), 7)
+
+    @mock.patch('minfluxdbconvert.json.reader')
+    def test_no_archive_dir(self, mock_reader):
+        """Verify we don't cause errors in this mode."""
+        mock_reader.TransactionReader = MockReader
+        config = {
+            'mint': {
+                'directory': '/foo',
+                'archive': {}
+            }
+        }
+        body = json.jsonify(config, '/foo/bar.csv')
+        self.assertEqual(len(body), 7)
+        
