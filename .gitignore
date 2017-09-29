@@ -1,5 +1,8 @@
 build/
 dist/
+*.coverage
+*.tox/
+*.cache/
 *.yaml
 *.json
 *.csv

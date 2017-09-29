@@ -1,6 +1,8 @@
+"""Various constants used within minfluxdb-convert."""
+
 MAJOR_VERSION = 0
 MINOR_VERSION = 0
-PATCH_VERSION = 3
+PATCH_VERSION = 4
 
 __version__ = '{}.{}.{}'.format(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
 

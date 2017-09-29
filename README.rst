@@ -1,5 +1,5 @@
-minfluxdb-convert
-===================
+minfluxdb-convert |Build| |Coverage|
+=====================================
 A python tool to take a transaction log from https://mint.com and convert it for import into an influxdb database
 
 Disclaimer
@@ -67,3 +67,9 @@ Another feature is the ability to retrieve a net sum across all measurements.  H
                 - category to exclude
 
 If anything changes with what you need to exclude, you can always go in and re-generate the data (timestamps don't change so everything should be overwritten properly).  A future improvement would be to add a 'regenerate-all' flag that, given a directory, will regenerate all of the influxdb data for each csv in that directory.
+
+
+.. |Build| image:: https://travis-ci.org/fronzbot/minfluxdb-convert.svg?branch=master
+   :target: https://travis-ci.org/fronzbot/minfluxdb-convert
+.. |Coverage| image:: https://coveralls.io/repos/github/fronzbot/minfluxdb-convert/badge.svg?branch=master
+    :target: https://coveralls.io/github/fronzbot/minfluxdb-convert?branch=master
