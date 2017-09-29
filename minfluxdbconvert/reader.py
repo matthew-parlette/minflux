@@ -1,6 +1,5 @@
 """Module used to read csv and report results."""
 import os
-import errno
 import sys
 import pathlib
 import shutil
@@ -83,9 +82,9 @@ class TransactionReader(object):
             file_name_no_ext = current_path.stem
             count = 1
             check_file = '{}/{}_{}.csv.gzip'.format(archive_dir, file_name_no_ext, count)
-            while(os.path.exists(check_file)):
+            while os.path.exists(check_file):
                 count += 1
-                check_file = '{}/{}_{}.csv.gzip'.format(archive_dir,file_name_no_ext, count)
+                check_file = '{}/{}_{}.csv.gzip'.format(archive_dir, file_name_no_ext, count)
                 if count > 256:
                     LOGGER.error('Too many name collisions during '
                                  'archive of %s.  Consider using files '
@@ -96,5 +95,3 @@ class TransactionReader(object):
         with gzip.GzipFile(check_file, 'wb') as gzipfile:
             with open(self._csvfile, 'rb') as input_file:
                 shutil.copyfileobj(input_file, gzipfile)
-        
-        

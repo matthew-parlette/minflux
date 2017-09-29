@@ -1,5 +1,4 @@
 """Module that handles writing to database."""
-import sys
 import logging
 import json
 from influxdb import InfluxDBClient
@@ -27,7 +26,7 @@ def influxdb_write(config, client, source, db_skip=False):
 
 class InfluxClient(object):
     """Wrapper class for influx client."""
-    
+
     def __init__(self, config):
         """Initialize the InfluxDB Client."""
         self.host = config[CONF_INFLUX][CONF_HOST]

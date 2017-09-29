@@ -1,15 +1,12 @@
 """Primary module for minfluxdb-convert."""
 import sys
-import json
-import os
 import glob
 import logging
 import minfluxdbconvert.util as util
 import minfluxdbconvert.yaml as yaml
 import minfluxdbconvert.dbwrite as dbwrite
-from minfluxdbconvert.const import (CONF_INFLUX, CONF_USER, CONF_PASSWORD, CONF_DBNAME,
-                                    CONF_HOST, CONF_PORT, CONF_FILE, CONF_MINT, CONF_LOGGER,
-                                    CONF_LEVEL, CONF_DIR, CONF_ARCHIVE)
+from minfluxdbconvert.const import (CONF_FILE, CONF_MINT, CONF_LOGGER,
+                                    CONF_LEVEL, CONF_DIR)
 from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
 
 LOGGER = logging.getLogger(__name__)

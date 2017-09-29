@@ -5,7 +5,7 @@ import sys
 import logging
 import yaml
 import voluptuous as vol
-from minfluxdbconvert.util import string, boolean, ensure_list
+from minfluxdbconvert.util import string, ensure_list
 from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER, CONF_PASSWORD,
                                     CONF_DBNAME, CONF_FILE, CONF_LOGGER, CONF_LEVEL,
                                     CONF_INFLUX, CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
