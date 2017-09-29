@@ -3,6 +3,7 @@ import unittest
 from unittest import mock
 from minfluxdbconvert import dbwrite as dbwrite
 
+
 class TestInfluxClient(unittest.TestCase):
     """Tests InfluxClient class."""
 
@@ -21,8 +22,9 @@ class TestInfluxClient(unittest.TestCase):
     def tearDown(self):
         """Tear down routine called after each test."""
         self.config = dict()
-    
+
     def test_init(self):
+        """Tests initialization of InfluxClient."""
         client = dbwrite.InfluxClient(self.config)
         self.assertEqual(client.host, self.config['influxdb']['host'])
         self.assertEqual(client.port, self.config['influxdb']['port'])
@@ -32,10 +34,12 @@ class TestInfluxClient(unittest.TestCase):
 
     @mock.patch('minfluxdbconvert.dbwrite.InfluxDBClient.write_points')
     def test_write_data(self, mock_influx):
+        """Tests the write_data call inside InfluxClient."""
         mock_influx.return_value = None
         client = dbwrite.InfluxClient(self.config)
         client.write_data('')
         self.assertEqual(mock_influx.call_count, 1)
+
 
 class TestInfluxDBWriter(unittest.TestCase):
     """Class tests functionality of influxdb_write."""
@@ -57,14 +61,17 @@ class TestInfluxDBWriter(unittest.TestCase):
         """Tear down routine called after each test."""
         self.config = dict()
         self.client = None
-    
+
     @mock.patch('minfluxdbconvert.dbwrite.json.dump')
     @mock.patch('minfluxdbconvert.dbwrite.jsonify')
     def test_db_skip(self, mock_json, mock_jsonify):
         """Tests return of db_skip."""
         mock_json.return_value = True
         mock_jsonify.return_value = {}
-        self.assertTrue(dbwrite.influxdb_write(self.config, self.client, '', db_skip=True))
+        self.assertTrue(dbwrite.influxdb_write(self.config,
+                                               self.client,
+                                               '',
+                                               db_skip=True))
 
     @mock.patch('minfluxdbconvert.dbwrite.jsonify')
     @mock.patch('minfluxdbconvert.dbwrite.InfluxDBClient.write_points')
@@ -73,4 +80,4 @@ class TestInfluxDBWriter(unittest.TestCase):
         mock_influx.return_value = None
         mock_jsonify.return_value = dict()
         self.assertTrue(dbwrite.influxdb_write(self.config, self.client, ''))
-        self.assertEqual(mock_influx.call_count, 1)  
+        self.assertEqual(mock_influx.call_count, 1)

@@ -6,10 +6,12 @@ import shutil
 import gzip
 import csv
 import logging
-from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS, ATTR_NOTES,
-                                    ATTR_ACCOUNT, ATTR_CATEGORY, ATTR_TYPE, ATTR_AMOUNT)
+from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS,
+                                    ATTR_NOTES, ATTR_ACCOUNT, ATTR_CATEGORY,
+                                    ATTR_TYPE, ATTR_AMOUNT)
 
 LOGGER = logging.getLogger(__name__)
+
 
 class TransactionReader(object):
     """Class to parse transactions."""
@@ -22,15 +24,16 @@ class TransactionReader(object):
             LOGGER.error('Invalid file %s', self._csvfile)
             sys.exit(1)
         self.read_csv()
-        self._headers = {ATTR_DATE: None,
-                         ATTR_DESC: None,
-                         ATTR_LABELS: None,
-                         ATTR_NOTES: None,
-                         ATTR_ACCOUNT: None,
-                         ATTR_CATEGORY: None,
-                         ATTR_AMOUNT: None,
-                         ATTR_TYPE: None
-                        }
+        self._headers = {
+            ATTR_DATE: None,
+            ATTR_DESC: None,
+            ATTR_LABELS: None,
+            ATTR_NOTES: None,
+            ATTR_ACCOUNT: None,
+            ATTR_CATEGORY: None,
+            ATTR_AMOUNT: None,
+            ATTR_TYPE: None
+        }
         self.get_headers()
         if archive:
             self.archive(archive_dir)
@@ -81,10 +84,14 @@ class TransactionReader(object):
         if os.path.exists(check_file):
             file_name_no_ext = current_path.stem
             count = 1
-            check_file = '{}/{}_{}.csv.gzip'.format(archive_dir, file_name_no_ext, count)
+            check_file = '{}/{}_{}.csv.gzip'.format(archive_dir,
+                                                    file_name_no_ext,
+                                                    count)
             while os.path.exists(check_file):
                 count += 1
-                check_file = '{}/{}_{}.csv.gzip'.format(archive_dir, file_name_no_ext, count)
+                check_file = '{}/{}_{}.csv.gzip'.format(archive_dir,
+                                                        file_name_no_ext,
+                                                        count)
                 if count > 256:
                     LOGGER.error('Too many name collisions during '
                                  'archive of %s.  Consider using files '

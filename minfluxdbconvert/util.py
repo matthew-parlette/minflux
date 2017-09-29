@@ -1,6 +1,4 @@
-"""
-Various helper functions for minfluxdb-convert.
-"""
+"""Various helper functions for minfluxdb-convert."""
 import logging
 import argparse
 from typing import Any, Union, TypeVar, Sequence
@@ -15,10 +13,12 @@ T = TypeVar('T')
 
 LOGGER = logging.getLogger(__name__)
 
-def date_to_epoch(date):
-    """Converts timestamp to epoch ns."""
+
+def date_to_iso(date):
+    """Converts timestamp to ISO 8601."""
     dtobj = pytz.utc.localize(datetime.strptime(date, '%m/%d/%Y'))
     return dtobj.isoformat()
+
 
 def convert_value(value, txtype):
     """Converts value to +/- based on credit/debit transaction type."""
@@ -26,18 +26,20 @@ def convert_value(value, txtype):
     LOGGER.debug('Found amount %s of type %s', value, txtype)
     return round(txtype_map[txtype] * float(value), 2)
 
+
 def set_loggers(logger, file=None, level='info'):
     """Sets up loggers."""
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
     level = level.lower()
-    level_dict = {'debug': logging.DEBUG,
-                  'info': logging.INFO,
-                  'warn': logging.WARNING,
-                  'warning': logging.WARNING,
-                  'error': logging.ERROR,
-                  'critical': logging.CRITICAL
-                 }
+    level_dict = {
+        'debug': logging.DEBUG,
+        'info': logging.INFO,
+        'warn': logging.WARNING,
+        'warning': logging.WARNING,
+        'error': logging.ERROR,
+        'critical': logging.CRITICAL
+    }
     if file:
         handler = logging.FileHandler(file)
         handler.setLevel(level_dict[level])
@@ -47,11 +49,13 @@ def set_loggers(logger, file=None, level='info'):
 
     coloredlogs.install(level=level.upper())
 
+
 def string(value: Any) -> str:
     """Force value to string if not None."""
     if value is not None:
         return str(value)
     raise vol.Invalid('string value is None')
+
 
 def boolean(value: Any) -> bool:
     """Validate and coerce a boolean value."""
@@ -64,11 +68,13 @@ def boolean(value: Any) -> bool:
         raise vol.Invalid('invalid boolean value {}'.format(value))
     return bool(value)
 
+
 def ensure_list(value: Union[T, Sequence[T]]) -> Sequence[T]:
     """Wrap value in list if it is not one."""
     if value is None:
         return []
     return value if isinstance(value, list) else [value]
+
 
 class Parser(object):
     """Argument parsing class."""
@@ -80,15 +86,17 @@ class Parser(object):
 
     def add_args(self):
         """Adds arguments."""
-        self.parser.add_argument('--{}'.format(ARG_CONFIG.replace('_', '-')),
-                                 help='Directory of db config file.',
-                                 type=str,
-                                 required=True
-                                )
-        self.parser.add_argument('--{}'.format(ARG_NOPUSH.replace('_', '-')),
-                                 help='Only generate data file without pushing to db.',
-                                 action='store_true'
-                                )
+        self.parser.add_argument(
+            '--{}'.format(ARG_CONFIG.replace('_', '-')),
+            help='Directory of db config file.',
+            type=str,
+            required=True
+        )
+        self.parser.add_argument(
+            '--{}'.format(ARG_NOPUSH.replace('_', '-')),
+            help='Only generate data file without pushing to db.',
+            action='store_true'
+        )
 
     @property
     def args(self):

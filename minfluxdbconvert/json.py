@@ -12,6 +12,7 @@ from minfluxdbconvert.const import (CONF_NETSUM, CONF_EXCLUDE, CONF_VENDOR,
 
 LOGGER = logging.getLogger(__name__)
 
+
 def jsonify(config, csvfile):
     """Converts csv from mint into json file."""
     try:
@@ -32,7 +33,7 @@ def jsonify(config, csvfile):
     for entry in mint.data:
         value = util.convert_value(entry[headers[ATTR_AMOUNT]],
                                    entry[headers[ATTR_TYPE]])
-        date = util.date_to_epoch(entry[headers[ATTR_DATE]])
+        date = util.date_to_iso(entry[headers[ATTR_DATE]])
         all_dates.append(date)
         json_entry = {
             'tags': {
@@ -57,15 +58,18 @@ def jsonify(config, csvfile):
     json_body.append(net_sum_entry(net_value, all_dates))
     return json_body
 
+
 def net_sum_entry(net_value, all_dates):
     """Creates entry for net summation across measurements."""
-    json_entry = {'measurement': CONF_NETSUM,
-                  'time': min(all_dates),
-                  'fields': {
-                      'value': net_value
-                      }
-                 }
+    json_entry = {
+        'measurement': CONF_NETSUM,
+        'time': min(all_dates),
+        'fields': {
+            'value': net_value
+        }
+    }
     return json_entry
+
 
 def sort_by_category(json_entry, entry, headers):
     """Creates structure with category as measurement."""
@@ -74,6 +78,7 @@ def sort_by_category(json_entry, entry, headers):
     json_entry['tags']['account'] = entry[headers[ATTR_ACCOUNT]]
     return json_entry
 
+
 def sort_by_vendor(json_entry, entry, headers):
     """Creates structure with vendor as measurement."""
     json_entry['measurement'] = entry[headers[ATTR_DESC]]
@@ -81,12 +86,14 @@ def sort_by_vendor(json_entry, entry, headers):
     json_entry['tags']['account'] = entry[headers[ATTR_ACCOUNT]]
     return json_entry
 
+
 def sort_by_account(json_entry, entry, headers):
     """Creates structure with vendor as measurement."""
     json_entry['measurement'] = entry[headers[ATTR_ACCOUNT]]
     json_entry['tags']['vendor'] = entry[headers[ATTR_DESC]]
     json_entry['tags']['category'] = entry[headers[ATTR_CATEGORY]]
     return json_entry
+
 
 def check_entry_for_net_sum(config, entry, headers, value):
     """Checks if entry is valid for summing."""

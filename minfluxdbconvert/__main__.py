@@ -11,6 +11,7 @@ from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
 
 LOGGER = logging.getLogger(__name__)
 
+
 def get_arguments():
     """Gets command line arguments."""
     opts = dict()
@@ -18,6 +19,7 @@ def get_arguments():
     for arg in vars(parser.args):
         opts[arg] = getattr(parser.args, arg)
     return opts
+
 
 def main():
     """Start conversion."""
@@ -53,6 +55,7 @@ def main():
     elif not status:
         LOGGER.error('Database write unsuccessful :(')
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

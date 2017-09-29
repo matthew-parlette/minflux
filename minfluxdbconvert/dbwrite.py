@@ -8,6 +8,7 @@ from minfluxdbconvert.const import (CONF_INFLUX, CONF_HOST, CONF_PORT,
 
 LOGGER = logging.getLogger(__name__)
 
+
 def influxdb_write(config, client, source, db_skip=False):
     """Reads source data and writes to client."""
     json_body = jsonify(config, source)
@@ -38,8 +39,7 @@ class InfluxClient(object):
                                      self.port,
                                      self.user,
                                      self.password,
-                                     self.dbname
-                                    )
+                                     self.dbname)
 
     def write_data(self, data):
         """Wrapper for influxdb writes."""
