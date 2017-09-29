@@ -9,7 +9,8 @@ from minfluxdbconvert.util import string, ensure_list
 from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER, CONF_PASSWORD,
                                     CONF_DBNAME, CONF_FILE, CONF_LOGGER, CONF_LEVEL,
                                     CONF_INFLUX, CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
-                                    CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT)
+                                    CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT, CONF_DIR,
+                                    CONF_ARCHIVE)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +23,11 @@ SCHEMA = vol.Schema({
         vol.Required(CONF_DBNAME): string
     }),
     vol.Required(CONF_MINT): vol.Schema({
-        vol.Required(CONF_FILE): string
+        vol.Optional(CONF_FILE): string,
+        vol.Optional(CONF_DIR): string,
+        vol.Optional(CONF_ARCHIVE): vol.Schema({
+            vol.Optional(CONF_DIR): string
+        })
     }),
     vol.Optional(CONF_LOGGER, default={CONF_FILE: '', CONF_LEVEL: 'INFO'}):
         vol.Schema({
@@ -49,8 +54,12 @@ def load_yaml(directory):
     with open(config_file, 'r') as yamlfile:
         cfg = yaml.load(yamlfile)
     try:
-        LOGGER.info(SCHEMA(cfg))
-        return SCHEMA(cfg)
+        LOGGER.debug(SCHEMA(cfg))
+        mint_props = [CONF_FILE, CONF_DIR]
+        if any(x in mint_props for x in cfg[CONF_MINT]):
+            return SCHEMA(cfg)
+        else:
+            raise vol.error.MultipleInvalid('Missing entry for mint')
     except vol.error.MultipleInvalid as err:
         LOGGER.error('Invalid configuration. %s', err)
         sys.exit(1)

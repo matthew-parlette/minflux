@@ -1,15 +1,12 @@
 """Primary module for minfluxdb-convert."""
 import sys
-import json
-import os
+import glob
 import logging
-from influxdb import InfluxDBClient
 import minfluxdbconvert.util as util
 import minfluxdbconvert.yaml as yaml
-from minfluxdbconvert.json import jsonify
-from minfluxdbconvert.const import (CONF_INFLUX, CONF_USER, CONF_PASSWORD, CONF_DBNAME,
-                                    CONF_HOST, CONF_PORT, CONF_FILE, CONF_MINT, CONF_LOGGER,
-                                    CONF_LEVEL)
+import minfluxdbconvert.dbwrite as dbwrite
+from minfluxdbconvert.const import (CONF_FILE, CONF_MINT, CONF_LOGGER,
+                                    CONF_LEVEL, CONF_DIR)
 from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
 
 LOGGER = logging.getLogger(__name__)
@@ -31,31 +28,31 @@ def main():
         file=config[CONF_LOGGER][CONF_FILE],
         level=config[CONF_LOGGER][CONF_LEVEL]
     )
+    db_client = dbwrite.InfluxClient(config)
+    status = False
+    try:
+        source = config[CONF_MINT][CONF_FILE]
+        LOGGER.debug('Using single file %s', source)
+        status = dbwrite.influxdb_write(config, db_client,
+                                        source, db_skip=args[ARG_NOPUSH])
+    except KeyError:
+        source = config[CONF_MINT][CONF_DIR]
+        LOGGER.debug('Using source dir %s', source)
+        status = True
+        for file in glob.glob('{}/*.csv'.format(source)):
+            LOGGER.debug('Found %s', file)
+            result = dbwrite.influxdb_write(config, db_client,
+                                            file, db_skip=args[ARG_NOPUSH])
+            if not result:
+                LOGGER.error('Could not write %s to database', file)
+                status = False
+                break
 
-    source_file = config[CONF_MINT][CONF_FILE]
-
-    json_body = jsonify(config, source_file)
-    LOGGER.debug(json_body)
-    if args[ARG_NOPUSH]:
-        LOGGER.warning('Skipping database write.')
-        json_info = json.dumps(json_body)
-        with open('dump.json', 'w') as outfile:
-            json.dump(json_info, outfile)
-        LOGGER.info('Data sent to %s/dump.json', os.getcwd())
-        sys.exit()
-    else:
-        host = config[CONF_INFLUX][CONF_HOST]
-        port = config[CONF_INFLUX][CONF_PORT]
-        dbname = config[CONF_INFLUX][CONF_DBNAME]
-        user = config[CONF_INFLUX][CONF_USER]
-        password = config[CONF_INFLUX][CONF_PASSWORD]
-
-        client = InfluxDBClient(host, port, user, password, dbname)
-        client.write_points(json_body)
-
-    LOGGER.info('Databse write successful! :)')
-    sys.exit()
-
+    if status and not args[ARG_NOPUSH]:
+        LOGGER.info('Databse write successful! :)')
+    elif not status:
+        LOGGER.error('Database write unsuccessful :(')
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

@@ -7,13 +7,24 @@ from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS,
                                     ATTR_NOTES, ATTR_ACCOUNT, ATTR_CATEGORY,
                                     ATTR_TYPE, ATTR_AMOUNT)
 from minfluxdbconvert.const import (CONF_NETSUM, CONF_EXCLUDE, CONF_VENDOR,
-                                    CONF_CATEGORY, CONF_ACCOUNT)
+                                    CONF_CATEGORY, CONF_ACCOUNT, CONF_MINT,
+                                    CONF_DIR, CONF_ARCHIVE)
 
 LOGGER = logging.getLogger(__name__)
 
 def jsonify(config, csvfile):
     """Converts csv from mint into json file."""
-    mint = reader.TransactionReader(csvfile)
+    try:
+        arch_config = config[CONF_MINT][CONF_ARCHIVE]
+        arch_dir = None
+        if CONF_DIR in arch_config:
+            arch_dir = arch_config[CONF_DIR]
+        mint = reader.TransactionReader(csvfile,
+                                        archive=True,
+                                        archive_dir=arch_dir)
+    except KeyError:
+        mint = reader.TransactionReader(csvfile)
+
     headers = mint.headers
     json_body = list()
     all_dates = list()
