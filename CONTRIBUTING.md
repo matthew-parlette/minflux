@@ -37,7 +37,7 @@ mint:
 
 If you do not have an InfluxDB instance you can push results to, you can simply use the `--skip-push` flag as an option when you run `minfluxdbconvert`.  This will run the whole script except for the write to an InfluxDB instance.  The data is instead dumped as a json file which can be used for debugging/verification.
 
-### An alternative is to install the package as if you were an end user.  This step would be required after every change, so it's more cumbersome than the previous method (but has the benefit of ensuring there are no dependency issues with your code).
+An alternative is to install the package as if you were an end user.  This step would be required after every change, so it's more cumbersome than the previous method (but has the benefit of ensuring there are no dependency issues with your code).
 
 ```bash
 $ sudo python3 setup.py install
@@ -113,7 +113,7 @@ Each feature being added should be in its own pull request (ie. its own branch).
 2. Make your changes.
 3. If adding new functionality, consider if you will need to add unit tests to verify functionality.
 4. Test your changes locally with `tox` as described above.
-5. Once everything looks good, commit your changes: `git add.` `git commit -m "Added some feature"`.
+5. Once everything looks good, commit your changes: `git add .` `git commit -m "Added some feature"`.
 6. Push your committed changed to your GitHub fork: `git push origin HEAD`.
 7. Follow [these steps](https://help.github.com/articles/creating-a-pull-request/) to submit your pull request.
 8. Keep an eye on your PR for comments/suggestions as well as any style violations automatically detected by [Hound](https://houndci.com/)
@@ -131,7 +131,7 @@ $ git rebase upstream/master
 If there are any conflicts detected during rebase, repeat the following process until resolved:
 
 1. `git status` shows the file containing the conflict.  Edit the file and resolve the lines between `<<<< | >>>>`.
-2. Add the modified file via either `git add <file>` or `git add.`.
+2. Add the modified file via either `git add <file>` or `git add .`.
 3. Continue with rebase: `git rebase --continue`.
 4. Repeat until all conflicts are resolved.
 
