@@ -6,11 +6,12 @@ import logging
 import yaml
 import voluptuous as vol
 from minfluxdbconvert.util import string, ensure_list
-from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER, CONF_PASSWORD,
-                                    CONF_DBNAME, CONF_FILE, CONF_LOGGER, CONF_LEVEL,
-                                    CONF_INFLUX, CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
-                                    CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT, CONF_DIR,
-                                    CONF_ARCHIVE)
+from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER,
+                                    CONF_PASSWORD, CONF_DBNAME, CONF_FILE,
+                                    CONF_LOGGER, CONF_LEVEL, CONF_INFLUX,
+                                    CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
+                                    CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT,
+                                    CONF_DIR, CONF_ARCHIVE)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ SCHEMA = vol.Schema({
     vol.Required(CONF_MINT): vol.Schema({
         vol.Optional(CONF_FILE): string,
         vol.Optional(CONF_DIR): string,
-        vol.Optional(CONF_ARCHIVE): vol.Schema({
+        vol.Optional(CONF_ARCHIVE, default={}): vol.Schema({
             vol.Optional(CONF_DIR): string
         })
     }),
@@ -45,6 +46,7 @@ SCHEMA = vol.Schema({
         })
 })
 
+
 def load_yaml(directory):
     """Reads yaml file and returns result."""
     config_file = '{}/config.yaml'.format(directory)
@@ -63,4 +65,3 @@ def load_yaml(directory):
     except vol.error.MultipleInvalid as err:
         LOGGER.error('Invalid configuration. %s', err)
         sys.exit(1)
-            

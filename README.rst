@@ -1,5 +1,5 @@
-minfluxdb-convert |Build| |Coverage|
-=====================================
+minfluxdb-convert |Build| |Coverage| |Versions|
+================================================
 A python tool to take a transaction log from https://mint.com and convert it for import into an influxdb database
 
 Disclaimer
@@ -72,4 +72,5 @@ If anything changes with what you need to exclude, you can always go in and re-g
 .. |Build| image:: https://travis-ci.org/fronzbot/minfluxdb-convert.svg?branch=master
    :target: https://travis-ci.org/fronzbot/minfluxdb-convert
 .. |Coverage| image:: https://coveralls.io/repos/github/fronzbot/minfluxdb-convert/badge.svg?branch=master
-    :target: https://coveralls.io/github/fronzbot/minfluxdb-convert?branch=master
+   :target: https://coveralls.io/github/fronzbot/minfluxdb-convert?branch=master
+.. |Versions| image:: https://img.shields.io/badge/python-3.4%2C3.5%2C3.6-blue.svg

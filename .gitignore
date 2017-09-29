@@ -6,5 +6,6 @@ dist/
 *.yaml
 *.json
 *.csv
+*.pyc
 *__pycache__*
 *.egg-info
