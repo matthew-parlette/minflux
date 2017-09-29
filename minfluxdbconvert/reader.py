@@ -1,5 +1,6 @@
 """Module used to read csv and report results."""
-
+import os
+import sys
 import csv
 import logging
 from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS, ATTR_NOTES,
@@ -13,6 +14,9 @@ class TransactionReader(object):
     def __init__(self, csvfile):
         """Initialize class."""
         self._data = None
+        if not os.path.isfile(csvfile):
+            LOGGER.error('Invalid file %s', csvfile)
+            sys.exit(1)
         self.read_csv(csvfile)
         self._headers = {ATTR_DATE: None,
                          ATTR_DESC: None,

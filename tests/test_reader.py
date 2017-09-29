@@ -6,8 +6,10 @@ from minfluxdbconvert import reader as reader
 class TestTransactionReader(unittest.TestCase):
     """Test the TransactionReader class."""
 
+    @mock.patch('minfluxdbconvert.yaml.os.path.isfile')
     @mock.patch('minfluxdbconvert.reader.csv.reader')
-    def test_read_csv(self, mock_csv_read):
+    def test_read_csv(self, mock_csv_read, mock_is_file):
+        mock_is_file.return_value = True
         mock_csv_read.return_value = [['Date',
                                        'Category',
                                        'Description',
@@ -34,8 +36,10 @@ class TestTransactionReader(unittest.TestCase):
         for key in self.Reader.headers:
             self.assertTrue(self.Reader.headers[key] is not None)
 
+    @mock.patch('minfluxdbconvert.yaml.os.path.isfile')
     @mock.patch('minfluxdbconvert.reader.csv.reader')
-    def test_extra_keys_in_data(self, mock_csv_read):
+    def test_extra_keys_in_data(self, mock_csv_read, mock_is_file):
+        mock_is_file.return_value = True
         mock_csv_read.return_value = [['Date',
                                        'Category',
                                        'Description',
@@ -63,5 +67,9 @@ class TestTransactionReader(unittest.TestCase):
         self.assertEqual(self.Reader.data, [mock_csv_read.return_value[1]])
         for key in self.Reader.headers:
             self.assertTrue(self.Reader.headers[key] is not None)
-        
+
+    def test_file_not_exist(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.Reader = reader.TransactionReader('/tmp/fake')
+        self.assertEqual(cm.exception.code, 1)
             

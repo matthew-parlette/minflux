@@ -2,7 +2,7 @@
 
 MAJOR_VERSION = 0
 MINOR_VERSION = 0
-PATCH_VERSION = 4
+PATCH_VERSION = 5
 
 __version__ = '{}.{}.{}'.format(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
 
@@ -29,6 +29,8 @@ CONF_EXCLUDE = 'exclude'
 CONF_VENDOR = 'vendor'
 CONF_CATEGORY = 'category'
 CONF_ACCOUNT = 'account'
+CONF_DIR = 'directory'
+CONF_ARCHIVE = 'archive'
 
 #### ATTRIBUTES ####
 ATTR_DATE = 'date'
