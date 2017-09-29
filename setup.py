@@ -1,6 +1,7 @@
+"""Setup file for minfluxdbconvert."""
 from setuptools import setup, find_packages
 from minfluxdbconvert.const import (__version__, PROJECT_NAME, PROJECT_LICENSE,
-                                  PROJECT_EMAIL, PROJECT_URL, PROJECT_AUTHOR)
+                                    PROJECT_EMAIL, PROJECT_URL, PROJECT_AUTHOR)
 
 REQUIRES = [
     'pyyaml==3.12',
@@ -19,6 +20,7 @@ setup(
     url=PROJECT_URL,
     author=PROJECT_AUTHOR,
     author_email=PROJECT_EMAIL,
+    license=PROJECT_LICENSE,
     packages=PACKAGES,
     include_package_data=True,
     platforms='any',
