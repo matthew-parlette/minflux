@@ -51,7 +51,7 @@ def load_yaml(directory):
     """Reads yaml file and returns result."""
     config_file = '{}/config.yaml'.format(directory)
     if not os.path.isfile(config_file):
-        LOGGER.error('% is not a valid file', config_file)
+        LOGGER.error("% is not a valid file", config_file)
         sys.exit(1)
     with open(config_file, 'r') as yamlfile:
         cfg = yaml.load(yamlfile)
@@ -61,7 +61,7 @@ def load_yaml(directory):
         if any(x in mint_props for x in cfg[CONF_MINT]):
             return SCHEMA(cfg)
         else:
-            raise vol.error.MultipleInvalid('Missing entry for mint')
+            raise vol.error.MultipleInvalid("Missing entry for mint")
     except vol.error.MultipleInvalid as err:
-        LOGGER.error('Invalid configuration. %s', err)
+        LOGGER.error("Invalid configuration. %s", err)
         sys.exit(1)

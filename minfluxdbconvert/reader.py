@@ -21,7 +21,7 @@ class TransactionReader(object):
         self._csvfile = csvfile
         self._data = None
         if not os.path.isfile(self._csvfile):
-            LOGGER.error('Invalid file %s', self._csvfile)
+            LOGGER.error("Invalid file %s", self._csvfile)
             sys.exit(1)
         self.read_csv()
         self._headers = {
@@ -66,7 +66,7 @@ class TransactionReader(object):
             key = key.replace(' ', '_')
             self._headers[key] = header_line.index(item)
 
-        LOGGER.debug('Headers: %s', self._headers)
+        LOGGER.debug("Headers: %s", self._headers)
         # Get rid of header line from data
         self._data.pop(0)
 
@@ -93,12 +93,12 @@ class TransactionReader(object):
                                                         file_name_no_ext,
                                                         count)
                 if count > 256:
-                    LOGGER.error('Too many name collisions during '
-                                 'archive of %s.  Consider using files '
-                                 'with unique names instead.',
+                    LOGGER.error("Too many name collisions during "
+                                 "archive of %s.  Consider using files "
+                                 "with unique names instead.",
                                  file_name_no_ext)
                     sys.exit(1)
-        LOGGER.info('Compressing with gzip to %s', check_file)
+        LOGGER.info("Compressing with gzip to %s", check_file)
         with gzip.GzipFile(check_file, 'wb') as gzipfile:
             with open(self._csvfile, 'rb') as input_file:
                 shutil.copyfileobj(input_file, gzipfile)
