@@ -1,7 +1,7 @@
 """Tests dbwrite functionality."""
 import unittest
 from unittest import mock
-from minfluxdbconvert import dbwrite as dbwrite
+from minflux import dbwrite as dbwrite
 
 
 class TestInfluxClient(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestInfluxClient(unittest.TestCase):
         self.assertEqual(client.user, self.config['influxdb']['user'])
         self.assertEqual(client.password, self.config['influxdb']['password'])
 
-    @mock.patch('minfluxdbconvert.dbwrite.InfluxDBClient.write_points')
+    @mock.patch('minflux.dbwrite.InfluxDBClient.write_points')
     def test_write_data(self, mock_influx):
         """Tests the write_data call inside InfluxClient."""
         mock_influx.return_value = None
@@ -62,8 +62,8 @@ class TestInfluxDBWriter(unittest.TestCase):
         self.config = dict()
         self.client = None
 
-    @mock.patch('minfluxdbconvert.dbwrite.json.dump')
-    @mock.patch('minfluxdbconvert.dbwrite.jsonify')
+    @mock.patch('minflux.dbwrite.json.dump')
+    @mock.patch('minflux.dbwrite.jsonify')
     def test_db_skip(self, mock_json, mock_jsonify):
         """Tests return of db_skip."""
         mock_json.return_value = True
@@ -73,8 +73,8 @@ class TestInfluxDBWriter(unittest.TestCase):
                                                '',
                                                db_skip=True))
 
-    @mock.patch('minfluxdbconvert.dbwrite.jsonify')
-    @mock.patch('minfluxdbconvert.dbwrite.InfluxDBClient.write_points')
+    @mock.patch('minflux.dbwrite.jsonify')
+    @mock.patch('minflux.dbwrite.InfluxDBClient.write_points')
     def test_normal_write(self, mock_influx, mock_jsonify):
         """Tests a normal db write."""
         mock_influx.return_value = None

@@ -1,16 +1,16 @@
-"""Various constants used within minfluxdb-convert."""
+"""Various constants used within minflux."""
 
 MAJOR_VERSION = 0
 MINOR_VERSION = 0
-PATCH_VERSION = 7
+PATCH_VERSION = 8
 
 __version__ = '{}.{}.{}'.format(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
 
-PROJECT_NAME = 'minfluxdb-convert'
+PROJECT_NAME = 'minflux'
 PROJECT_LICENSE = 'MIT'
 PROJECT_AUTHOR = "Kevin Fronczak"
 PROJECT_COPYRIGHT = " 2017, {}".format(PROJECT_AUTHOR)
-PROJECT_URL = 'https://github.com/fronzbot/minfluxdb-convert'
+PROJECT_URL = 'https://github.com/fronzbot/minflux'
 PROJECT_EMAIL = 'kfronczak@gmail.com'
 
 #### CONFIG ####

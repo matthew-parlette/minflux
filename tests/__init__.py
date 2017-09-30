@@ -1,1 +1,1 @@
-"""Init file for minfluxdbconvert tests."""
+"""Init file for minflux tests."""

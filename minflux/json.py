@@ -1,14 +1,14 @@
 """Module used to create influxdb json data."""
 
 import logging
-import minfluxdbconvert.reader as reader
-import minfluxdbconvert.util as util
-from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS,
-                                    ATTR_NOTES, ATTR_ACCOUNT, ATTR_CATEGORY,
-                                    ATTR_TYPE, ATTR_AMOUNT)
-from minfluxdbconvert.const import (CONF_NETSUM, CONF_EXCLUDE, CONF_VENDOR,
-                                    CONF_CATEGORY, CONF_ACCOUNT, CONF_MINT,
-                                    CONF_DIR, CONF_ARCHIVE)
+import minflux.reader as reader
+import minflux.util as util
+from minflux.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS,
+                           ATTR_NOTES, ATTR_ACCOUNT, ATTR_CATEGORY,
+                           ATTR_TYPE, ATTR_AMOUNT)
+from minflux.const import (CONF_NETSUM, CONF_EXCLUDE, CONF_VENDOR,
+                           CONF_CATEGORY, CONF_ACCOUNT, CONF_MINT,
+                           CONF_DIR, CONF_ARCHIVE)
 
 LOGGER = logging.getLogger(__name__)
 

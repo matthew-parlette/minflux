@@ -1,11 +1,11 @@
 """Tests the yaml loading functionality."""
 import unittest
 from unittest import mock
-from minfluxdbconvert import yaml as yaml
+from minflux import yaml as yaml
 
 
-@mock.patch('minfluxdbconvert.yaml.os.path.isfile')
-@mock.patch('minfluxdbconvert.yaml.yaml.load')
+@mock.patch('minflux.yaml.os.path.isfile')
+@mock.patch('minflux.yaml.yaml.load')
 class TestYamlLoad(unittest.TestCase):
     """Test load_yaml functionality."""
 

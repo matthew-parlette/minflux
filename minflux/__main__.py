@@ -1,14 +1,14 @@
-"""Primary module for minfluxdb-convert."""
+"""Primary module for minflux."""
 import sys
 import glob
 import logging
 import argparse
-import minfluxdbconvert.util as util
-import minfluxdbconvert.yaml as yaml
-import minfluxdbconvert.dbwrite as dbwrite
-from minfluxdbconvert.const import (CONF_FILE, CONF_MINT, CONF_LOGGER,
-                                    CONF_LEVEL, CONF_DIR)
-from minfluxdbconvert.const import (__version__, ARG_CONFIG, ARG_NOPUSH)
+import minflux.util as util
+import minflux.yaml as yaml
+import minflux.dbwrite as dbwrite
+from minflux.const import (CONF_FILE, CONF_MINT, CONF_LOGGER,
+                           CONF_LEVEL, CONF_DIR)
+from minflux.const import (__version__, ARG_CONFIG, ARG_NOPUSH)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class Parser(object):
         self.parser.add_argument(
             '--{}'.format('version'),
             action='version',
-            version='minfluxdb-convert {version}'.format(version=__version__)
+            version='minflux {version}'.format(version=__version__)
         )
 
     @property

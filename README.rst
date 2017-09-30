@@ -1,4 +1,4 @@
-minfluxdb-convert |Build| |Coverage| |Versions|
+minflux |Build| |Coverage| |Versions|
 ================================================
 A python tool to take a transaction log from https://mint.com and convert it for import into an influxdb database
 
@@ -10,15 +10,15 @@ Usage
 =======
 Clone repo:
 
-.. code::bash
+.. code:: bash
 
-    $ git clone https://github.com/fronzbot/minfluxdb-convert.git
+    $ git clone https://github.com/fronzbot/minflux.git
 
 Install:
 
-.. code::bash
+.. code:: bash
     
-    $ cd minfluxdb-convert
+    $ cd minflux
     $ sudo python3 setup.py install
     
 Create a configuration file called ``config.yaml`` with the following contents:
@@ -85,10 +85,10 @@ Additionally, the following line can be added to allow for archiving of processe
             directory: <optional archive directory>
         ...
 
-Once ``minfluxdb-convert`` writes your csv files to the database, the file will be compressed and moved the specified archive directory (defaults to a directory named ``archive`` in the directory where your csv files are, if not specified).
+Once ``minflux`` writes your csv files to the database, the file will be compressed and moved the specified archive directory (defaults to a directory named ``archive`` in the directory where your csv files are, if not specified).
         
-.. |Build| image:: https://travis-ci.org/fronzbot/minfluxdb-convert.svg?branch=master
-   :target: https://travis-ci.org/fronzbot/minfluxdb-convert
-.. |Coverage| image:: https://coveralls.io/repos/github/fronzbot/minfluxdb-convert/badge.svg?branch=master
-   :target: https://coveralls.io/github/fronzbot/minfluxdb-convert?branch=master
+.. |Build| image:: https://travis-ci.org/fronzbot/minflux.svg?branch=master
+   :target: https://travis-ci.org/fronzbot/minflux
+.. |Coverage| image:: https://coveralls.io/repos/github/fronzbot/minflux/badge.svg?branch=master
+   :target: https://coveralls.io/github/fronzbot/minflux?branch=master
 .. |Versions| image:: https://img.shields.io/badge/python-3.4%2C3.5%2C3.6-blue.svg

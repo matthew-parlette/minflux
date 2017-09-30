@@ -1,11 +1,11 @@
 """Tests main functionality."""
 import unittest
 from unittest import mock
-from minfluxdbconvert import __main__ as main
+from minflux import __main__ as main
 
 
-@mock.patch('minfluxdbconvert.__main__.dbwrite.influxdb_write')
-@mock.patch('minfluxdbconvert.__main__.yaml.load_yaml')
+@mock.patch('minflux.__main__.dbwrite.influxdb_write')
+@mock.patch('minflux.__main__.yaml.load_yaml')
 class TestMainModule(unittest.TestCase):
     """Test functionality of main module."""
 
@@ -43,7 +43,7 @@ class TestMainModule(unittest.TestCase):
                 main.main()
         self.assertEqual(mock_client.call_count, 1)
 
-    @mock.patch('minfluxdbconvert.__main__.glob.glob')
+    @mock.patch('minflux.__main__.glob.glob')
     def test_with_dir(self, mock_glob, mock_load_yaml, mock_client):
         """Tests handling of directory containing multiple csv files."""
         test_args = ['mfdb', '--config=/tmp/fake/path']
@@ -71,7 +71,7 @@ class TestMainModule(unittest.TestCase):
                 main.main()
         self.assertEqual(mock_client.call_count, 3)
 
-    @mock.patch('minfluxdbconvert.__main__.glob.glob')
+    @mock.patch('minflux.__main__.glob.glob')
     def test_bad_write(self, mock_glob, mock_load_yaml, mock_client):
         """Checks that we exit script on a failed db write."""
         test_args = ['mfdb', '--config=/tmp/fake/path']

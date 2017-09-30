@@ -1,6 +1,6 @@
 ## Description:
 
-**Related issue (if applicable):** fixes #<minfluxdb-convert issue number goes here>
+**Related issue (if applicable):** fixes #<minflux issue number goes here>
 
 ## Example entry for `config.yaml` (if applicable):
 ```yaml

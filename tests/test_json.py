@@ -1,7 +1,7 @@
 """Tests the json building functionality."""
 import unittest
 from unittest import mock
-from minfluxdbconvert import json as json
+from minflux import json as json
 
 
 class MockReader(object):
@@ -154,7 +154,7 @@ class TestJsonify(unittest.TestCase):
         self.assertEqual(returned_entry['fields']['value'], 5)
         self.assertEqual(returned_entry['measurement'], 'net_sum')
 
-    @mock.patch('minfluxdbconvert.json.reader')
+    @mock.patch('minflux.json.reader')
     def test_jsonify(self, mock_reader):
         """Verifies keys/values properly set in json body."""
         mock_reader.TransactionReader = MockReader
@@ -163,7 +163,7 @@ class TestJsonify(unittest.TestCase):
         self.assertEqual(body[-1]['measurement'], 'net_sum')
         self.assertEqual(body[-1]['fields']['value'], 2.25)
 
-    @mock.patch('minfluxdbconvert.json.reader')
+    @mock.patch('minflux.json.reader')
     def test_archive_single_file_custom_dir(self, mock_reader):
         """Verify we don't cause errors in this mode."""
         mock_reader.TransactionReader = MockReader
@@ -178,7 +178,7 @@ class TestJsonify(unittest.TestCase):
         body = json.jsonify(config, '/foo.csv')
         self.assertEqual(len(body), 7)
 
-    @mock.patch('minfluxdbconvert.json.reader')
+    @mock.patch('minflux.json.reader')
     def test_archive_dir_custom_dir(self, mock_reader):
         """Verify we don't cause errors in this mode."""
         mock_reader.TransactionReader = MockReader
@@ -193,7 +193,7 @@ class TestJsonify(unittest.TestCase):
         body = json.jsonify(config, '/foo/bar.csv')
         self.assertEqual(len(body), 7)
 
-    @mock.patch('minfluxdbconvert.json.reader')
+    @mock.patch('minflux.json.reader')
     def test_no_archive_dir(self, mock_reader):
         """Verify we don't cause errors in this mode."""
         mock_reader.TransactionReader = MockReader
