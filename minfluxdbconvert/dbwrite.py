@@ -13,11 +13,11 @@ def influxdb_write(config, client, source, db_skip=False):
     """Reads source data and writes to client."""
     json_body = jsonify(config, source)
     if db_skip:
-        LOGGER.warning('Skipping database write.')
+        LOGGER.warning("Skipping database write.")
         json_info = json.dumps(json_body)
         with open('{}.json'.format(source), 'w') as outfile:
             json.dump(json_info, outfile)
-        LOGGER.info('Data sent to %s.json', source)
+        LOGGER.info("Data sent to %s.json", source)
         return True
 
     client.write_data(json_body)
@@ -43,5 +43,5 @@ class InfluxClient(object):
 
     def write_data(self, data):
         """Wrapper for influxdb writes."""
-        LOGGER.debug('Writing to %s as %s: %s', self.dbname, self.user, data)
+        LOGGER.debug("Writing to %s as %s: %s", self.dbname, self.user, data)
         self.client.write_points(data)
