@@ -85,13 +85,13 @@ class TransactionReader(object):
             file_name_no_ext = current_path.stem
             count = 1
             check_file = '{}/{}_{}.csv.gz'.format(archive_dir,
-                                                    file_name_no_ext,
-                                                    count)
+                                                  file_name_no_ext,
+                                                  count)
             while os.path.exists(check_file):
                 count += 1
                 check_file = '{}/{}_{}.csv.gz'.format(archive_dir,
-                                                        file_name_no_ext,
-                                                        count)
+                                                      file_name_no_ext,
+                                                      count)
                 if count > 256:
                     LOGGER.error("Too many name collisions during "
                                  "archive of %s.  Consider using files "
