@@ -1,12 +1,10 @@
 """Various helper functions for minfluxdb-convert."""
 import logging
-import argparse
 from typing import Any, Union, TypeVar, Sequence
 from datetime import datetime
 import coloredlogs
 import voluptuous as vol
 import pytz
-from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
 
 # typing typevar
 T = TypeVar('T')
@@ -74,31 +72,3 @@ def ensure_list(value: Union[T, Sequence[T]]) -> Sequence[T]:
     if value is None:
         return []
     return value if isinstance(value, list) else [value]
-
-
-class Parser(object):
-    """Argument parsing class."""
-
-    def __init__(self):
-        """Intialize arguments for parser."""
-        self.parser = argparse.ArgumentParser(__name__)
-        self.add_args()
-
-    def add_args(self):
-        """Adds arguments."""
-        self.parser.add_argument(
-            '--{}'.format(ARG_CONFIG.replace('_', '-')),
-            help="Directory of db config file.",
-            type=str,
-            required=True
-        )
-        self.parser.add_argument(
-            '--{}'.format(ARG_NOPUSH.replace('_', '-')),
-            help="Only generate data file without pushing to db.",
-            action='store_true'
-        )
-
-    @property
-    def args(self):
-        """Return list of args."""
-        return self.parser.parse_args()

@@ -2,20 +2,54 @@
 import sys
 import glob
 import logging
+import argparse
 import minfluxdbconvert.util as util
 import minfluxdbconvert.yaml as yaml
 import minfluxdbconvert.dbwrite as dbwrite
 from minfluxdbconvert.const import (CONF_FILE, CONF_MINT, CONF_LOGGER,
                                     CONF_LEVEL, CONF_DIR)
-from minfluxdbconvert.const import (ARG_CONFIG, ARG_NOPUSH)
+from minfluxdbconvert.const import (__version__, ARG_CONFIG, ARG_NOPUSH)
 
 LOGGER = logging.getLogger(__name__)
+
+
+class Parser(object):
+    """Argument parsing class."""
+
+    def __init__(self):
+        """Intialize arguments for parser."""
+        self.parser = argparse.ArgumentParser(__name__)
+        self.add_args()
+
+    def add_args(self):
+        """Adds arguments."""
+        self.parser.add_argument(
+            '--{}'.format(ARG_CONFIG.replace('_', '-')),
+            help="Directory of db config file.",
+            type=str,
+            required=True
+        )
+        self.parser.add_argument(
+            '--{}'.format(ARG_NOPUSH.replace('_', '-')),
+            help="Only generate data file without pushing to db.",
+            action='store_true'
+        )
+        self.parser.add_argument(
+            '--{}'.format('version'),
+            action='version',
+            version='minfluxdb-convert {version}'.format(version=__version__)
+        )
+
+    @property
+    def args(self):
+        """Return list of args."""
+        return self.parser.parse_args()
 
 
 def get_arguments():
     """Gets command line arguments."""
     opts = dict()
-    parser = util.Parser()
+    parser = Parser()
     for arg in vars(parser.args):
         opts[arg] = getattr(parser.args, arg)
     return opts
