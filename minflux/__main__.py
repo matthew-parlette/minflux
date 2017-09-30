@@ -18,7 +18,7 @@ class Parser(object):
 
     def __init__(self):
         """Intialize arguments for parser."""
-        self.parser = argparse.ArgumentParser(__name__)
+        self.parser = argparse.ArgumentParser('minflux')
         self.add_args()
 
     def add_args(self):
@@ -37,7 +37,7 @@ class Parser(object):
         self.parser.add_argument(
             '--{}'.format('version'),
             action='version',
-            version='minflux {version}'.format(version=__version__)
+            version='%(prog)s {version}'.format(version=__version__)
         )
 
     @property

@@ -78,18 +78,18 @@ class TransactionReader(object):
         # Creates directory if it does not exist
         pathlib.Path(archive_dir).mkdir(parents=True, exist_ok=True)
         file_name_only = current_path.name
-        check_file = '{}/{}.gzip'.format(archive_dir, file_name_only)
+        check_file = '{}/{}.gz'.format(archive_dir, file_name_only)
 
         # Make sure there are no name collisions with archive
         if os.path.exists(check_file):
             file_name_no_ext = current_path.stem
             count = 1
-            check_file = '{}/{}_{}.csv.gzip'.format(archive_dir,
+            check_file = '{}/{}_{}.csv.gz'.format(archive_dir,
                                                     file_name_no_ext,
                                                     count)
             while os.path.exists(check_file):
                 count += 1
-                check_file = '{}/{}_{}.csv.gzip'.format(archive_dir,
+                check_file = '{}/{}_{}.csv.gz'.format(archive_dir,
                                                         file_name_no_ext,
                                                         count)
                 if count > 256:
@@ -102,3 +102,9 @@ class TransactionReader(object):
         with gzip.GzipFile(check_file, 'wb') as gzipfile:
             with open(self._csvfile, 'rb') as input_file:
                 shutil.copyfileobj(input_file, gzipfile)
+
+        if os.path.exists(check_file):
+            os.remove(self._csvfile)
+        else:
+            LOGGER.error("Compressed file not found, skipping deletion of "
+                         "%s. Archiving not performed!", self._csvfile)
