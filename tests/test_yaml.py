@@ -180,7 +180,7 @@ class TestYamlLoad(unittest.TestCase):
             },
             'mint': {
                 'file': 'foobar.csv',
-                'archive': {}
+                'archive': None
             }
         }
         mock_isfile.return_value = True

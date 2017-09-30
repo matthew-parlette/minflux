@@ -18,7 +18,7 @@ def jsonify(config, csvfile):
     try:
         arch_config = config[CONF_MINT][CONF_ARCHIVE]
         arch_dir = None
-        if CONF_DIR in arch_config:
+        if arch_dir is not None and CONF_DIR in arch_config:
             arch_dir = arch_config[CONF_DIR]
         mint = reader.TransactionReader(csvfile,
                                         archive=True,
