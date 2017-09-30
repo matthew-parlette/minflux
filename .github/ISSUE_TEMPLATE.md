@@ -1,14 +1,16 @@
-Make sure you are running the latest version of minfluxdb-convert before reporting an issue.
-
-**Type:** [Feature Request | Issue]
+### Type:
+- [ ] Feature Request
+- [ ] Issue
+- [ ] Other
 
 **minfluxdb-convert version (`mfdb --version`):**
 
 **Python release (`python3 --version`):**
 
-**Description of problem/request:**
+###  Description of problem/request:
+<insert description here>
 
-**Problem-relevant `config.yaml` entries and steps to reproduce:**
+### Problem-relevant `config.yaml` entries and steps to reproduce:
 ```yaml
 
 ```
@@ -17,10 +19,9 @@ Make sure you are running the latest version of minfluxdb-convert before reporti
 2. 
 3. 
 
-**Traceback (if applicable):**
+### Traceback (if applicable):
 ```bash
 
 ```
 
-**Additional info:**
-
+### Additional info:
