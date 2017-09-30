@@ -1,8 +1,3 @@
-### Type:
-- [ ] Feature Request
-- [ ] Issue
-- [ ] Other
-
 **minflux version (`minflux --version`):**
 
 **Python release (`python3 --version`):**
