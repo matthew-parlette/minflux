@@ -1,7 +1,7 @@
 """Setup file for minfluxdbconvert."""
 from setuptools import setup, find_packages
-from minfluxdbconvert.const import (__version__, PROJECT_NAME, PROJECT_LICENSE,
-                                    PROJECT_EMAIL, PROJECT_URL, PROJECT_AUTHOR)
+from minflux.const import (__version__, PROJECT_NAME, PROJECT_LICENSE,
+                           PROJECT_EMAIL, PROJECT_URL, PROJECT_AUTHOR)
 
 REQUIRES = [
     'pyyaml==3.12',
@@ -27,7 +27,7 @@ setup(
     install_requires=REQUIRES,
     entry_points={
         'console_scripts': [
-            'mfdb = minfluxdbconvert.__main__:main'
+            'minflux = minflux.__main__:main'
         ]
     }
 )

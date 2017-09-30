@@ -6,9 +6,9 @@ import shutil
 import gzip
 import csv
 import logging
-from minfluxdbconvert.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS,
-                                    ATTR_NOTES, ATTR_ACCOUNT, ATTR_CATEGORY,
-                                    ATTR_TYPE, ATTR_AMOUNT)
+from minflux.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS,
+                           ATTR_NOTES, ATTR_ACCOUNT, ATTR_CATEGORY,
+                           ATTR_TYPE, ATTR_AMOUNT)
 
 LOGGER = logging.getLogger(__name__)
 

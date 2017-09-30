@@ -2,7 +2,7 @@
 import unittest
 import voluptuous as vol
 import logging
-from minfluxdbconvert import util as util
+from minflux import util as util
 
 
 class TestUtilFunctions(unittest.TestCase):

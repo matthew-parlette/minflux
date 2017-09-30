@@ -1,7 +1,7 @@
 """Tests the csv reading functionality."""
 import unittest
 from unittest import mock
-from minfluxdbconvert import reader as reader
+from minflux import reader as reader
 
 
 class MockPathLib(object):
@@ -31,7 +31,7 @@ class MockPathLib(object):
         return None
 
 
-@mock.patch('minfluxdbconvert.yaml.os.path.isfile')
+@mock.patch('minflux.yaml.os.path.isfile')
 class TestTransactionReader(unittest.TestCase):
     """Test the TransactionReader class."""
 
@@ -64,7 +64,7 @@ class TestTransactionReader(unittest.TestCase):
         """Tears down setup after test."""
         self.mock_csv_read_return = list()
 
-    @mock.patch('minfluxdbconvert.reader.csv.reader')
+    @mock.patch('minflux.reader.csv.reader')
     def test_read_csv(self, mock_csv_read, mock_is_file):
         """Verifies read_csv function."""
         mock_is_file.return_value = True
@@ -78,7 +78,7 @@ class TestTransactionReader(unittest.TestCase):
         for key in self.Reader.headers:
             self.assertTrue(self.Reader.headers[key] is not None)
 
-    @mock.patch('minfluxdbconvert.reader.csv.reader')
+    @mock.patch('minflux.reader.csv.reader')
     def test_extra_keys_in_data(self, mock_csv_read, mock_is_file):
         """Verfies no errors thrown if unexpected keys exist in data."""
         mock_is_file.return_value = True
@@ -101,8 +101,8 @@ class TestTransactionReader(unittest.TestCase):
             self.Reader = reader.TransactionReader('/tmp/fake')
         self.assertEqual(cm.exception.code, 1)
 
-    @mock.patch('minfluxdbconvert.reader.TransactionReader.archive')
-    @mock.patch('minfluxdbconvert.reader.csv.reader')
+    @mock.patch('minflux.reader.TransactionReader.archive')
+    @mock.patch('minflux.reader.csv.reader')
     def test_archive_entry(self, mock_csv_read, mock_archive, mock_is_file):
         """Checks that archiving is attempted when flagged in config."""
         mock_archive.return_value = None
@@ -113,9 +113,9 @@ class TestTransactionReader(unittest.TestCase):
             self.Reader = reader.TransactionReader('/tmp/fake', archive=True)
         self.assertEqual(mock_archive.call_count, 1)
 
-    @mock.patch('minfluxdbconvert.reader.pathlib')
-    @mock.patch('minfluxdbconvert.reader.os.path.exists')
-    @mock.patch('minfluxdbconvert.reader.csv.reader')
+    @mock.patch('minflux.reader.pathlib')
+    @mock.patch('minflux.reader.os.path.exists')
+    @mock.patch('minflux.reader.csv.reader')
     def test_archive_exist_on_too_many_collisons(self,
                                                  mock_csv_read,
                                                  mock_exists,

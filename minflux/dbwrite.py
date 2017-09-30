@@ -2,9 +2,9 @@
 import logging
 import json
 from influxdb import InfluxDBClient
-from minfluxdbconvert.json import jsonify
-from minfluxdbconvert.const import (CONF_INFLUX, CONF_HOST, CONF_PORT,
-                                    CONF_USER, CONF_PASSWORD, CONF_DBNAME)
+from minflux.json import jsonify
+from minflux.const import (CONF_INFLUX, CONF_HOST, CONF_PORT,
+                           CONF_USER, CONF_PASSWORD, CONF_DBNAME)
 
 LOGGER = logging.getLogger(__name__)
 

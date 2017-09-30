@@ -3,7 +3,7 @@
 - [ ] Issue
 - [ ] Other
 
-**minfluxdb-convert version (`mfdb --version`):**
+**minflux version (`minflux --version`):**
 
 **Python release (`python3 --version`):**
 

@@ -1,4 +1,4 @@
-"""Various helper functions for minfluxdb-convert."""
+"""Various helper functions for minflux."""
 import logging
 from typing import Any, Union, TypeVar, Sequence
 from datetime import datetime

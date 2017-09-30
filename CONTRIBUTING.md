@@ -1,27 +1,27 @@
-# Contributing to minfluxdb-convert
+# Contributing to minflux
 
 The following outlines what this project is about and how to contribute.
 
 ## What this project is about
-minfluxdb-convert is intended as a personal finance tool in that it takes raw data exported from an aggregation service, specifically [Mint](https://mint.com), and converts it to an [InfluxDB](https://www.influxdata.com/)-friendly format.  This allows for long-term data storage in a format that's conducive for plotting long-term trends and correlations.  The intention of this project is to supplement or replace custom spreadsheet usage and, instead, allow for all of your financial data to be accessed via a database (such as on a home server).
+minflux is intended as a personal finance tool in that it takes raw data exported from an aggregation service, specifically [Mint](https://mint.com), and converts it to an [InfluxDB](https://www.influxdata.com/)-friendly format.  This allows for long-term data storage in a format that's conducive for plotting long-term trends and correlations.  The intention of this project is to supplement or replace custom spreadsheet usage and, instead, allow for all of your financial data to be accessed via a database (such as on a home server).
 
 ## Prerequisites
 Currently, this package is intended for use on Linux.  Windows is not currently supported.  In addition, this project only works with Python 3.4+ and Python 2.7 support is not planned.
 
 ## Setting up local development area
-All development is done on the `master` branch of the minfluxdb-convert project.  To get started with a development area, first you need to fork the repo from GitHub.  Once you do this, you can clone your forked copy of the repo into your work area with the following:
+All development is done on the `master` branch of the minflux project.  To get started with a development area, first you need to fork the repo from GitHub.  Once you do this, you can clone your forked copy of the repo into your work area with the following:
 
 ```bash
-$ git clone https://github.com/YOUR_GIT_USERNAME/minfluxdb-convert.git
-$ cd minfluxdb-convert
-$ git remote add upstream https://github.com/fronzbot/minfluxdb-convert.git
+$ git clone https://github.com/YOUR_GIT_USERNAME/minflux.git
+$ cd minflux
+$ git remote add upstream https://github.com/fronzbot/minflux.git
 ```
 
 ## Running the module locally
-For rapid test development, you can use the following command to run the minfluxdb-convert package.
+For rapid test development, you can use the following command to run the minflux package.
 
 ```bash
-$ python3 -m minfluxdbconvert --config=/path/to/config.yaml [OPTIONS]
+$ python3 -m minflux --config=/path/to/config.yaml [OPTIONS]
 ```
 
 ```yaml
@@ -35,7 +35,7 @@ mint:
  file: /home/user/mint.csv
 ```
 
-If you do not have an InfluxDB instance you can push results to, you can simply use the `--skip-push` flag as an option when you run `minfluxdbconvert`.  This will run the whole script except for the write to an InfluxDB instance.  The data is instead dumped as a json file which can be used for debugging/verification.
+If you do not have an InfluxDB instance you can push results to, you can simply use the `--skip-push` flag as an option when you run `minflux`.  This will run the whole script except for the write to an InfluxDB instance.  The data is instead dumped as a json file which can be used for debugging/verification.
 
 An alternative is to install the package as if you were an end user.  This step would be required after every change, so it's more cumbersome than the previous method (but has the benefit of ensuring there are no dependency issues with your code).
 
@@ -45,7 +45,7 @@ $ mfdb --config=/path/to/config.yaml [OPTIONS]
 ```
 
 ## Style Guidelines
-minfluxdb-convert enforces [PEP8 style](https://www.python.org/dev/peps/pep-0008/) on all submitted code.  Code is automatically test as part of your pull request via [Travis CI](https://travis-ci.org/fronzbot/minfluxdb-convert).  A quick summary of the most common style violations:
+minflux enforces [PEP8 style](https://www.python.org/dev/peps/pep-0008/) on all submitted code.  Code is automatically test as part of your pull request via [Travis CI](https://travis-ci.org/fronzbot/minflux).  A quick summary of the most common style violations:
 
 - Line length limited to 79 characters.
 - Use four spaces per indentation level.  Tabs not allowed.
@@ -120,7 +120,7 @@ Each feature being added should be in its own pull request (ie. its own branch).
 
 
 ## Catching up with reality
-If it's taking a while to implement your feature, you can catch up with the `master` branch by using `git rebase`.  This will pull the latest changes in locally, rewind your commits, bring the latest changes from minfluxdb-convert, and replay all of your commits on top.
+If it's taking a while to implement your feature, you can catch up with the `master` branch by using `git rebase`.  This will pull the latest changes in locally, rewind your commits, bring the latest changes from minflux, and replay all of your commits on top.
 
 ```bash
 # Run this from your local feature branch

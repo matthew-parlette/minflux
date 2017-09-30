@@ -5,13 +5,13 @@ import sys
 import logging
 import yaml
 import voluptuous as vol
-from minfluxdbconvert.util import string, ensure_list
-from minfluxdbconvert.const import (CONF_HOST, CONF_PORT, CONF_USER,
-                                    CONF_PASSWORD, CONF_DBNAME, CONF_FILE,
-                                    CONF_LOGGER, CONF_LEVEL, CONF_INFLUX,
-                                    CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
-                                    CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT,
-                                    CONF_DIR, CONF_ARCHIVE)
+from minflux.util import string, ensure_list
+from minflux.const import (CONF_HOST, CONF_PORT, CONF_USER,
+                           CONF_PASSWORD, CONF_DBNAME, CONF_FILE,
+                           CONF_LOGGER, CONF_LEVEL, CONF_INFLUX,
+                           CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
+                           CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT,
+                           CONF_DIR, CONF_ARCHIVE)
 
 LOGGER = logging.getLogger(__name__)
 
