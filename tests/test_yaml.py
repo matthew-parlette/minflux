@@ -31,6 +31,7 @@ class TestYamlLoad(unittest.TestCase):
         self.assertTrue('influxdb' in x)
         self.assertTrue('mint' in x)
         self.assertTrue('file' in x['mint'])
+        self.assertFalse('archive' in x['mint'])
 
     def test_load_empty_yaml(self, mock_yaml_load, mock_isfile):
         """Tests loading of empty configuration."""

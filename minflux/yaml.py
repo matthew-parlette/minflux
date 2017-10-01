@@ -26,7 +26,7 @@ SCHEMA = vol.Schema({
     vol.Required(CONF_MINT): vol.Schema({
         vol.Optional(CONF_FILE): string,
         vol.Optional(CONF_DIR): string,
-        vol.Optional(CONF_ARCHIVE, default={}): vol.Any(
+        vol.Optional(CONF_ARCHIVE): vol.Any(
             vol.Schema({vol.Optional(CONF_DIR): string}), None
         )
     }),
