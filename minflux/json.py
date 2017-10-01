@@ -46,9 +46,9 @@ def jsonify(config, csvfile):
             }
         }
 
-        json_body.append(sort_by_category(json_entry, entry, headers))
-        json_body.append(sort_by_vendor(json_entry, entry, headers))
-        json_body.append(sort_by_account(json_entry, entry, headers))
+        json_body.append(sort_by_category(json_entry.copy(), entry, headers))
+        json_body.append(sort_by_vendor(json_entry.copy(), entry, headers))
+        json_body.append(sort_by_account(json_entry.copy(), entry, headers))
         if CONF_NETSUM in config and CONF_EXCLUDE in config[CONF_NETSUM]:
             net_value += check_entry_for_net_sum(config[CONF_NETSUM],
                                                  entry,
@@ -76,6 +76,8 @@ def sort_by_category(json_entry, entry, headers):
     json_entry['measurement'] = entry[headers[ATTR_CATEGORY]]
     json_entry['tags']['vendor'] = entry[headers[ATTR_DESC]]
     json_entry['tags']['account'] = entry[headers[ATTR_ACCOUNT]]
+    LOGGER.debug("Using measurement %s for category",
+                 entry[headers[ATTR_CATEGORY]])
     return json_entry
 
 
@@ -84,6 +86,8 @@ def sort_by_vendor(json_entry, entry, headers):
     json_entry['measurement'] = entry[headers[ATTR_DESC]]
     json_entry['tags']['category'] = entry[headers[ATTR_CATEGORY]]
     json_entry['tags']['account'] = entry[headers[ATTR_ACCOUNT]]
+    LOGGER.debug("Using measurement %s for category",
+                 entry[headers[ATTR_DESC]])
     return json_entry
 
 
@@ -92,6 +96,8 @@ def sort_by_account(json_entry, entry, headers):
     json_entry['measurement'] = entry[headers[ATTR_ACCOUNT]]
     json_entry['tags']['vendor'] = entry[headers[ATTR_DESC]]
     json_entry['tags']['category'] = entry[headers[ATTR_CATEGORY]]
+    LOGGER.debug("Using measurement %s for category",
+                 entry[headers[ATTR_ACCOUNT]])
     return json_entry
 
 
