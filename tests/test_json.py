@@ -3,6 +3,29 @@ import unittest
 from unittest import mock
 from minflux import json as json
 
+DATA = [
+    [
+        '1/1/1970',
+        'foo',
+        'bar',
+        'credit',
+        '3.50',
+        'foocat',
+        'foolabel',
+        'barnote'
+    ],
+    [
+        '1/2/1970',
+        'oof',
+        'rab',
+        'debit',
+        '1.25',
+        'tacoof',
+        'lebaloof',
+        'etonrab'
+    ]
+]
+
 
 class MockReader(object):
     """Class used to mock the reader module."""
@@ -19,28 +42,7 @@ class MockReader(object):
             'labels': 6,
             'notes': 7
         }
-        self.data = [
-            [
-                '1/1/1970',
-                'foo',
-                'bar',
-                'credit',
-                '3.50',
-                'foocat',
-                'foolabel',
-                'barnote'
-            ],
-            [
-                '1/2/1970',
-                'oof',
-                'rab',
-                'debit',
-                '1.25',
-                'tacoof',
-                'lebaloof',
-                'etonrab'
-            ]
-        ]
+        self.data = DATA
 
 
 class TestJsonify(unittest.TestCase):
@@ -162,6 +164,26 @@ class TestJsonify(unittest.TestCase):
         self.assertEqual(len(body), 7)
         self.assertEqual(body[-1]['measurement'], 'net_sum')
         self.assertEqual(body[-1]['fields']['value'], 2.25)
+        measurement_keys = [
+            DATA[0][1],
+            DATA[0][2],
+            DATA[0][5],
+            DATA[1][1],
+            DATA[1][2],
+            DATA[1][5]
+        ]
+
+        # Make a measurement counter
+        measurement_counter = dict()
+        for key in measurement_keys:
+            measurement_counter[key] = 0
+        for entry in body:
+            for key in measurement_keys:
+                if entry['measurement'] == key:
+                    measurement_counter[key] += 1
+
+        for key in measurement_keys:
+            self.assertEqual(measurement_counter[key], 1)
 
     @mock.patch('minflux.json.reader')
     def test_archive_single_file_custom_dir(self, mock_reader):
