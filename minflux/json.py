@@ -8,7 +8,7 @@ from minflux.const import (ATTR_DATE, ATTR_DESC, ATTR_LABELS,
                            ATTR_TYPE, ATTR_AMOUNT)
 from minflux.const import (CONF_NETSUM, CONF_EXCLUDE, CONF_VENDOR,
                            CONF_CATEGORY, CONF_ACCOUNT, CONF_MINT,
-                           CONF_DIR, CONF_ARCHIVE)
+                           CONF_DIR, CONF_ARCHIVE, CONF_SUM)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -63,6 +63,10 @@ class JsonData(object):
         self.json_entry['tags']['notes'] = entry[self.headers[ATTR_NOTES]]
         self.json_entry['time'] = date
 
+    def create_value_entry(self, value_dict):
+        """Adds a custom field to data."""
+        self.json_entry['fields'] = value_dict
+
     def append_net_sum_entry(self):
         """Appends a net_sum entry to the end of the json body."""
         json_entry = {
@@ -105,6 +109,7 @@ def jsonify(config, csvfile):
             json_data.json_entry['measurement'] = measure_name
             tag_dict = json_data.create_tags(entry, measurement)
             json_data.json_entry['tags'] = tag_dict
+            json_data.create_value_entry(value_dict)
             json_data.body.append(json_data.json_entry.copy())
 
         if CONF_NETSUM in config and CONF_EXCLUDE in config[CONF_NETSUM]:
@@ -117,6 +122,10 @@ def jsonify(config, csvfile):
 
     if CONF_NETSUM in config:
         json_data.append_net_sum_entry()
+
+    if CONF_SUM in config[CONF_MINT]:
+        for entry in get_sum_of_entries(json_data.body):
+            json_data.body.append(entry)
 
     return json_data.body
 
@@ -134,7 +143,32 @@ def check_entry_for_net_sum(config, entry, headers, value):
     return 0
 
 
-def create_value_entry(value_dict):
-    """Creates a custom value field."""
-    field_dict = {'fields': value_dict}
-    return field_dict
+def get_sum_of_entries(body):
+    """Find all measurements and sum across them."""
+    all_measures = dict()
+    for entry in body:
+        key = entry['measurement']
+        value = [entry['time'], entry['fields']['value']]
+        try:
+            all_measures[key].append(value)
+        except KeyError:
+            all_measures[key] = [value]
+    new_entries = []
+    for key, entries in all_measures.items():
+        date = None
+        val = 0
+        for entry in entries:
+            if date is None:
+                date = entry[0]
+            elif entry[0] < date:
+                date = entry[0]
+            val += entry[1]
+        sum_entry = {
+            'measurement': 'sum_{}'.format(key),
+            'time': date,
+            'fields': {
+                'value': val
+            }
+        }
+        new_entries.append(sum_entry)
+    return new_entries

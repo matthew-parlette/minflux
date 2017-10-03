@@ -31,6 +31,7 @@ CONF_CATEGORY = 'category'
 CONF_ACCOUNT = 'account'
 CONF_DIR = 'directory'
 CONF_ARCHIVE = 'archive'
+CONF_SUM = 'sum'
 
 #### ATTRIBUTES ####
 ATTR_DATE = 'date'

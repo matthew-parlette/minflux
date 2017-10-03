@@ -103,7 +103,8 @@ class TestJsonify(unittest.TestCase):
     def test_jsonify(self, mock_reader):
         """Verifies keys/values properly set in json body."""
         mock_reader.TransactionReader = MockReader
-        body = json.jsonify({'net_sum': self.netsum_config}, '/tmp/notreal')
+        body = json.jsonify({'mint': {}, 'net_sum': self.netsum_config},
+                            '/tmp/notreal')
         self.assertEqual(len(body), 7, msg=body)
         self.assertEqual(body[-1]['measurement'], 'net_sum')
         self.assertEqual(body[-1]['fields']['value'], 2.25)
@@ -127,6 +128,54 @@ class TestJsonify(unittest.TestCase):
 
         for key in measurement_keys:
             self.assertEqual(measurement_counter[key], 1)
+
+    def test_get_sum_entries(self):
+        """Tests ability to sum across measurements."""
+        body_mock = [
+            {
+                'measurement': 'foo',
+                'time': '1970-01-01T00:00:00+00:00',
+                'fields': {
+                    'value': 1.00
+                }
+            },
+            {
+                'measurement': 'foo',
+                'time': '1970-01-02T00:00:00+00:00',
+                'fields': {
+                    'value': 1.50
+                }
+            },
+            {
+                'measurement': 'bar',
+                'time': '1970-01-03T00:00:00+00:00',
+                'fields': {
+                    'value': 2.00
+                }
+            },
+            {
+                'measurement': 'bar',
+                'time': '1970-01-04T00:00:00+00:00',
+                'fields': {
+                    'value': 2.50
+                }
+            }
+        ]
+        entries = json.get_sum_of_entries(body_mock)
+        self.assertEqual(len(entries), 2, msg=entries)
+        foo_index = 0
+        bar_index = 1
+        if entries[0]['measurement'] == 'sum_bar':
+            foo_index = 1
+            bar_index = 0
+        self.assertEqual(entries[foo_index]['measurement'], 'sum_foo')
+        self.assertEqual(entries[foo_index]['time'],
+                         '1970-01-01T00:00:00+00:00')
+        self.assertEqual(entries[foo_index]['fields']['value'], 2.50)
+        self.assertEqual(entries[bar_index]['measurement'], 'sum_bar')
+        self.assertEqual(entries[bar_index]['time'],
+                         '1970-01-03T00:00:00+00:00')
+        self.assertEqual(entries[bar_index]['fields']['value'], 4.50)
 
     @mock.patch('minflux.json.reader')
     def test_archive_single_file_custom_dir(self, mock_reader):
@@ -165,7 +214,7 @@ class TestJsonify(unittest.TestCase):
         config = {
             'mint': {
                 'directory': '/foo',
-                'archive': {}
+                'archive': None
             }
         }
         body = json.jsonify(config, '/foo/bar.csv')
