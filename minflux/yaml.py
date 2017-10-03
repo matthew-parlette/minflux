@@ -35,7 +35,7 @@ SCHEMA = vol.Schema({
             vol.Optional(CONF_FILE, default=''): string,
             vol.Optional(CONF_LEVEL, default=logging.INFO): string
         }),
-    vol.Optional(CONF_NETSUM, default={}):
+    vol.Optional(CONF_NETSUM): vol.Any(
         vol.Schema({
             vol.Optional(CONF_EXCLUDE, default={}):
                 vol.Schema({
@@ -43,7 +43,7 @@ SCHEMA = vol.Schema({
                     vol.Optional(CONF_CATEGORY, default=[]): ensure_list,
                     vol.Optional(CONF_ACCOUNT, default=[]): ensure_list
                 })
-        })
+        }), None)
 })
 
 

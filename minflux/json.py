@@ -13,6 +13,68 @@ from minflux.const import (CONF_NETSUM, CONF_EXCLUDE, CONF_VENDOR,
 LOGGER = logging.getLogger(__name__)
 
 
+class JsonData(object):
+    """Representation of json data for InfluxDB."""
+
+    def __init__(self, config, headers):
+        """Initialize the Jsonjson_data class."""
+        self.headers = headers
+        self.body = list()
+        self.all_dates = list()
+        self.net_value = 0
+        self.add_net_sum_measure = False
+        self.check_net_sum_exclusion = False
+        self.measure_map = {
+            'vendor': ATTR_DESC,
+            'category': ATTR_CATEGORY,
+            'account': ATTR_ACCOUNT
+        }
+        self.json_entry = {
+            'tags': {
+                'label': None,
+                'notes': None,
+            },
+            'time': None,
+        }
+        if CONF_NETSUM in config:
+            self.add_net_sum_measure = True
+            if (config[CONF_NETSUM] is not None and
+                    CONF_EXCLUDE in config[CONF_NETSUM]):
+                self.check_net_sum_exclusion = True
+
+    def create_measurement(self, entry, measure_type):
+        """Returns measurement name for measure_type."""
+        return entry[self.headers[self.measure_map[measure_type]]]
+
+    def create_tags(self, entry, measurement):
+        """Removes 'measurement' from normal tag list."""
+        tag_dict = {
+            'vendor': entry[self.headers[ATTR_DESC]],
+            'category': entry[self.headers[ATTR_CATEGORY]],
+            'account': entry[self.headers[ATTR_ACCOUNT]]
+        }
+        tag_dict.pop(measurement, None)
+
+        return tag_dict
+
+    def create_entry(self, entry, date):
+        """Creates a generic json data set."""
+        self.json_entry['tags']['label'] = entry[self.headers[ATTR_LABELS]]
+        self.json_entry['tags']['notes'] = entry[self.headers[ATTR_NOTES]]
+        self.json_entry['time'] = date
+
+    def append_net_sum_entry(self):
+        """Appends a net_sum entry to the end of the json body."""
+        json_entry = {
+            'measurement': CONF_NETSUM,
+            'time': min(self.all_dates),
+            'fields': {
+                'value': self.net_value
+            }
+        }
+        self.body.append(json_entry)
+
+
 def jsonify(config, csvfile):
     """Converts csv from mint into json file."""
     try:
@@ -26,79 +88,37 @@ def jsonify(config, csvfile):
     except KeyError:
         mint = reader.TransactionReader(csvfile)
 
-    headers = mint.headers
-    json_body = list()
-    all_dates = list()
-    net_value = 0
+    json_data = JsonData(config, mint.headers)
+
     for entry in mint.data:
-        value = util.convert_value(entry[headers[ATTR_AMOUNT]],
-                                   entry[headers[ATTR_TYPE]])
-        date = util.date_to_iso(entry[headers[ATTR_DATE]])
-        all_dates.append(date)
-        json_entry = {
-            'tags': {
-                'label': entry[headers[ATTR_LABELS]],
-                'notes': entry[headers[ATTR_NOTES]],
-            },
-            'time': date,
-            'fields': {
-                'value': value
-            }
-        }
+        value_dict = dict()
+        value = util.convert_value(entry[json_data.headers[ATTR_AMOUNT]],
+                                   entry[json_data.headers[ATTR_TYPE]])
+        date = util.date_to_iso(entry[json_data.headers[ATTR_DATE]])
+        value_dict['value'] = value
+        json_data.all_dates.append(date)
 
-        json_body.append(sort_by_category(json_entry.copy(), entry, headers))
-        json_body.append(sort_by_vendor(json_entry.copy(), entry, headers))
-        json_body.append(sort_by_account(json_entry.copy(), entry, headers))
+        json_data.create_entry(entry, date)
+
+        for measurement in ['category', 'vendor', 'account']:
+            measure_name = json_data.create_measurement(entry, measurement)
+            json_data.json_entry['measurement'] = measure_name
+            tag_dict = json_data.create_tags(entry, measurement)
+            json_data.json_entry['tags'] = tag_dict
+            json_data.body.append(json_data.json_entry.copy())
+
         if CONF_NETSUM in config and CONF_EXCLUDE in config[CONF_NETSUM]:
-            net_value += check_entry_for_net_sum(config[CONF_NETSUM],
-                                                 entry,
-                                                 headers,
-                                                 value)
+            json_data.net_value += check_entry_for_net_sum(config[CONF_NETSUM],
+                                                           entry,
+                                                           json_data.headers,
+                                                           value)
+        elif CONF_NETSUM in config:
+            json_data.net_value += value
 
-    json_body.append(net_sum_entry(net_value, all_dates))
-    return json_body
+    if CONF_NETSUM in config:
+        json_data.append_net_sum_entry()
 
-
-def net_sum_entry(net_value, all_dates):
-    """Creates entry for net summation across measurements."""
-    json_entry = {
-        'measurement': CONF_NETSUM,
-        'time': min(all_dates),
-        'fields': {
-            'value': net_value
-        }
-    }
-    return json_entry
-
-
-def sort_by_category(json_entry, entry, headers):
-    """Creates structure with category as measurement."""
-    json_entry['measurement'] = entry[headers[ATTR_CATEGORY]]
-    json_entry['tags']['vendor'] = entry[headers[ATTR_DESC]]
-    json_entry['tags']['account'] = entry[headers[ATTR_ACCOUNT]]
-    LOGGER.debug("Using measurement %s for category",
-                 entry[headers[ATTR_CATEGORY]])
-    return json_entry
-
-
-def sort_by_vendor(json_entry, entry, headers):
-    """Creates structure with vendor as measurement."""
-    json_entry['measurement'] = entry[headers[ATTR_DESC]]
-    json_entry['tags']['category'] = entry[headers[ATTR_CATEGORY]]
-    json_entry['tags']['account'] = entry[headers[ATTR_ACCOUNT]]
-    LOGGER.debug("Using measurement %s for category",
-                 entry[headers[ATTR_DESC]])
-    return json_entry
-
-
-def sort_by_account(json_entry, entry, headers):
-    """Creates structure with vendor as measurement."""
-    json_entry['measurement'] = entry[headers[ATTR_ACCOUNT]]
-    json_entry['tags']['vendor'] = entry[headers[ATTR_DESC]]
-    json_entry['tags']['category'] = entry[headers[ATTR_CATEGORY]]
-    LOGGER.debug("Using measurement %s for category",
-                 entry[headers[ATTR_ACCOUNT]])
-    return json_entry
+    return json_data.body
 
 
 def check_entry_for_net_sum(config, entry, headers, value):
@@ -112,3 +132,9 @@ def check_entry_for_net_sum(config, entry, headers, value):
             account not in config[CONF_EXCLUDE][CONF_ACCOUNT]):
         return value
     return 0
+
+
+def create_value_entry(value_dict):
+    """Creates a custom value field."""
+    field_dict = {'fields': value_dict}
+    return field_dict
