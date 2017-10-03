@@ -61,6 +61,7 @@ class JsonData(object):
         """Creates a generic json data set."""
         self.json_entry['tags']['label'] = entry[self.headers[ATTR_LABELS]]
         self.json_entry['tags']['notes'] = entry[self.headers[ATTR_NOTES]]
+        self.json_entry['tags']['raw_date'] = entry[self.headers[ATTR_DATE]]
         self.json_entry['time'] = date
 
     def create_value_entry(self, value_dict):
@@ -148,24 +149,28 @@ def get_sum_of_entries(body):
     all_measures = dict()
     for entry in body:
         key = entry['measurement']
-        value = [entry['time'], entry['fields']['value']]
         try:
-            all_measures[key].append(value)
+            value = [
+                entry['tags']['raw_date'],
+                entry['fields']['value']
+            ]
+            try:
+                all_measures[key].append(value)
+            except KeyError:
+                all_measures[key] = [value]
         except KeyError:
-            all_measures[key] = [value]
+            pass
     new_entries = []
     for key, entries in all_measures.items():
-        date = None
         val = 0
         for entry in entries:
-            if date is None:
-                date = entry[0]
-            elif entry[0] < date:
-                date = entry[0]
+            iso_date = util.date_to_iso(entry[0], month_only=True)
+            LOGGER.debug("Using date for sum of %s", iso_date)
             val += entry[1]
+
         sum_entry = {
             'measurement': 'sum_{}'.format(key),
-            'time': date,
+            'time': iso_date,
             'fields': {
                 'value': val
             }

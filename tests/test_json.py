@@ -135,6 +135,9 @@ class TestJsonify(unittest.TestCase):
             {
                 'measurement': 'foo',
                 'time': '1970-01-01T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/1/1970'
+                },
                 'fields': {
                     'value': 1.00
                 }
@@ -142,6 +145,9 @@ class TestJsonify(unittest.TestCase):
             {
                 'measurement': 'foo',
                 'time': '1970-01-02T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/2/1970'
+                },
                 'fields': {
                     'value': 1.50
                 }
@@ -149,6 +155,9 @@ class TestJsonify(unittest.TestCase):
             {
                 'measurement': 'bar',
                 'time': '1970-01-03T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/3/1970'
+                },
                 'fields': {
                     'value': 2.00
                 }
@@ -156,6 +165,9 @@ class TestJsonify(unittest.TestCase):
             {
                 'measurement': 'bar',
                 'time': '1970-01-04T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/4/1970'
+                },
                 'fields': {
                     'value': 2.50
                 }
@@ -174,7 +186,7 @@ class TestJsonify(unittest.TestCase):
         self.assertEqual(entries[foo_index]['fields']['value'], 2.50)
         self.assertEqual(entries[bar_index]['measurement'], 'sum_bar')
         self.assertEqual(entries[bar_index]['time'],
-                         '1970-01-03T00:00:00+00:00')
+                         '1970-01-01T00:00:00+00:00')
         self.assertEqual(entries[bar_index]['fields']['value'], 4.50)
 
     @mock.patch('minflux.json.reader')

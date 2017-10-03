@@ -10,8 +10,11 @@ class TestUtilFunctions(unittest.TestCase):
 
     def test_date_to_iso(self):
         """Tests date to iso standard."""
-        date = '1/1/1970'
-        self.assertEqual(util.date_to_iso(date), '1970-01-01T00:00:00+00:00')
+        date = '1/8/1970'
+        self.assertEqual(util.date_to_iso(date),
+                         '1970-01-08T00:00:00+00:00')
+        self.assertEqual(util.date_to_iso(date, month_only=True),
+                         '1970-01-01T00:00:00+00:00')
 
     def test_convert_value(self):
         """Tests conversion of value to signed value."""

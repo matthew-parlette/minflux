@@ -12,8 +12,12 @@ T = TypeVar('T')
 LOGGER = logging.getLogger(__name__)
 
 
-def date_to_iso(date):
+def date_to_iso(date, month_only=False):
     """Converts timestamp to ISO 8601."""
+    if month_only:
+        new_date = date.split('/')
+        new_date[1] = '1'
+        date = '/'.join(new_date)
     dtobj = pytz.utc.localize(datetime.strptime(date, '%m/%d/%Y'))
     return dtobj.isoformat()
 
