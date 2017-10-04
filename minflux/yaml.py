@@ -11,7 +11,7 @@ from minflux.const import (CONF_HOST, CONF_PORT, CONF_USER,
                            CONF_LOGGER, CONF_LEVEL, CONF_INFLUX,
                            CONF_MINT, CONF_NETSUM, CONF_EXCLUDE,
                            CONF_VENDOR, CONF_CATEGORY, CONF_ACCOUNT,
-                           CONF_DIR, CONF_ARCHIVE)
+                           CONF_DIR, CONF_ARCHIVE, CONF_SUM)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,14 +28,15 @@ SCHEMA = vol.Schema({
         vol.Optional(CONF_DIR): string,
         vol.Optional(CONF_ARCHIVE): vol.Any(
             vol.Schema({vol.Optional(CONF_DIR): string}), None
-        )
+        ),
+        vol.Optional(CONF_SUM): None
     }),
     vol.Optional(CONF_LOGGER, default={CONF_FILE: '', CONF_LEVEL: 'INFO'}):
         vol.Schema({
             vol.Optional(CONF_FILE, default=''): string,
             vol.Optional(CONF_LEVEL, default=logging.INFO): string
         }),
-    vol.Optional(CONF_NETSUM, default={}):
+    vol.Optional(CONF_NETSUM): vol.Any(
         vol.Schema({
             vol.Optional(CONF_EXCLUDE, default={}):
                 vol.Schema({
@@ -43,7 +44,7 @@ SCHEMA = vol.Schema({
                     vol.Optional(CONF_CATEGORY, default=[]): ensure_list,
                     vol.Optional(CONF_ACCOUNT, default=[]): ensure_list
                 })
-        })
+        }), None)
 })
 
 

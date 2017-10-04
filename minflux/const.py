@@ -2,7 +2,7 @@
 
 MAJOR_VERSION = 0
 MINOR_VERSION = 0
-PATCH_VERSION = 10
+PATCH_VERSION = 11
 
 __version__ = '{}.{}.{}'.format(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
 
@@ -31,6 +31,7 @@ CONF_CATEGORY = 'category'
 CONF_ACCOUNT = 'account'
 CONF_DIR = 'directory'
 CONF_ARCHIVE = 'archive'
+CONF_SUM = 'sum'
 
 #### ATTRIBUTES ####
 ATTR_DATE = 'date'

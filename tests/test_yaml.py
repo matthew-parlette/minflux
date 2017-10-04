@@ -110,6 +110,28 @@ class TestYamlLoad(unittest.TestCase):
         self.assertEqual(validated_config['logger']['file'], '')
         self.assertEqual(validated_config['logger']['level'], 'warning')
 
+    def test_load_bare_net_sum(self, mock_yaml_load, mock_isfile):
+        """Tests loading of config with bare minimum net_sum entry."""
+        config = {
+            'influxdb': {
+                'host': 'foo',
+                'port': 1234,
+                'user': 'bar',
+                'password': 'foobar',
+                'dbname': 'foodb'
+            },
+            'mint': {
+                'file': 'foobar.csv'
+            },
+            'net_sum': None
+        }
+        mock_isfile.return_value = True
+        mock_yaml_load.return_value = config
+        mock_fh = mock.mock_open()
+        with mock.patch('builtins.open', mock_fh, create=False):
+            validated_config = yaml.load_yaml('/tmp')
+        self.assertTrue('net_sum' in validated_config, msg=validated_config)
+
     def test_load_net_sum_config(self, mock_yaml_load, mock_isfile):
         """Tests loading of configuration with net_sum entry."""
         config = {
@@ -140,6 +162,28 @@ class TestYamlLoad(unittest.TestCase):
                          list())
         self.assertEqual(validated_config['net_sum']['exclude']['account'],
                          ['test'])
+
+    def test_load_meas_sum_config(self, mock_yaml_load, mock_isfile):
+        """Tests loading of configuration with mint sum defined."""
+        config = {
+            'influxdb': {
+                'host': 'foo',
+                'port': 1234,
+                'user': 'bar',
+                'password': 'foobar',
+                'dbname': 'foodb'
+            },
+            'mint': {
+                'file': 'foo.csv',
+                'sum': None
+            }
+        }
+        mock_isfile.return_value = True
+        mock_yaml_load.return_value = config
+        mock_fh = mock.mock_open()
+        with mock.patch('builtins.open', mock_fh, create=False):
+            validated_config = yaml.load_yaml('/tmp')
+        self.assertTrue('sum' in validated_config['mint'])
 
     def test_file_not_exist(self, mock_yaml_load, mock_isfile):
         """Tests loading of configuration where mint file does not exist."""

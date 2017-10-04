@@ -76,51 +76,6 @@ class TestJsonify(unittest.TestCase):
         self.entry_2 = list()
         self.netsum_config = dict()
 
-    def test_sort_by_category(self):
-        """Verifies json sorted by category."""
-        json_expected = {
-            'measurement': 'foo',
-            'tags': {
-                'vendor': 'bar',
-                'account': 'foobar'
-            }
-        }
-
-        self.assertEqual(json.sort_by_category(self.json,
-                                               self.entry,
-                                               self.headers),
-                         json_expected)
-
-    def test_sort_by_vendor(self):
-        """Verifies json sorted by vendor."""
-        json_expected = {
-            'measurement': 'bar',
-            'tags': {
-                'category': 'foo',
-                'account': 'foobar'
-            }
-        }
-
-        self.assertEqual(json.sort_by_vendor(self.json,
-                                             self.entry,
-                                             self.headers),
-                         json_expected)
-
-    def test_sort_by_account(self):
-        """Verifies json sorted by account."""
-        json_expected = {
-            'measurement': 'foobar',
-            'tags': {
-                'vendor': 'bar',
-                'category': 'foo'
-            }
-        }
-
-        self.assertEqual(json.sort_by_account(self.json,
-                                              self.entry,
-                                              self.headers),
-                         json_expected)
-
     def test_net_sum_no_exclude(self):
         """Verifies amounts properly summed given no exclusions in config."""
         value = 0
@@ -144,24 +99,13 @@ class TestJsonify(unittest.TestCase):
                                               self.headers, 3)
         self.assertEqual(value, 3, msg='{}'.format(self.netsum_config))
 
-    def test_netsum_json_entry(self):
-        """Verifies date and value of net_sum."""
-        all_dates = [
-            '1970-01-01T00:00:00+00:00',
-            '1970-01-02T00:00:00+00:00',
-            '1970-01-03T00:00:00+00:00'
-        ]
-        returned_entry = json.net_sum_entry(5, all_dates)
-        self.assertEqual(returned_entry['time'], all_dates[0])
-        self.assertEqual(returned_entry['fields']['value'], 5)
-        self.assertEqual(returned_entry['measurement'], 'net_sum')
-
     @mock.patch('minflux.json.reader')
     def test_jsonify(self, mock_reader):
         """Verifies keys/values properly set in json body."""
         mock_reader.TransactionReader = MockReader
-        body = json.jsonify({'net_sum': self.netsum_config}, '/tmp/notreal')
-        self.assertEqual(len(body), 7)
+        body = json.jsonify({'mint': {}, 'net_sum': self.netsum_config},
+                            '/tmp/notreal')
+        self.assertEqual(len(body), 7, msg=body)
         self.assertEqual(body[-1]['measurement'], 'net_sum')
         self.assertEqual(body[-1]['fields']['value'], 2.25)
         measurement_keys = [
@@ -185,6 +129,66 @@ class TestJsonify(unittest.TestCase):
         for key in measurement_keys:
             self.assertEqual(measurement_counter[key], 1)
 
+    def test_get_sum_entries(self):
+        """Tests ability to sum across measurements."""
+        body_mock = [
+            {
+                'measurement': 'foo',
+                'time': '1970-01-01T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/1/1970'
+                },
+                'fields': {
+                    'value': 1.00
+                }
+            },
+            {
+                'measurement': 'foo',
+                'time': '1970-01-02T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/2/1970'
+                },
+                'fields': {
+                    'value': 1.50
+                }
+            },
+            {
+                'measurement': 'bar',
+                'time': '1970-01-03T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/3/1970'
+                },
+                'fields': {
+                    'value': 2.00
+                }
+            },
+            {
+                'measurement': 'bar',
+                'time': '1970-01-04T00:00:00+00:00',
+                'tags': {
+                    'raw_date': '1/4/1970'
+                },
+                'fields': {
+                    'value': 2.50
+                }
+            }
+        ]
+        entries = json.get_sum_of_entries(body_mock)
+        self.assertEqual(len(entries), 2, msg=entries)
+        foo_index = 0
+        bar_index = 1
+        if entries[0]['measurement'] == 'sum_bar':
+            foo_index = 1
+            bar_index = 0
+        self.assertEqual(entries[foo_index]['measurement'], 'sum_foo')
+        self.assertEqual(entries[foo_index]['time'],
+                         '1970-01-01T00:00:00+00:00')
+        self.assertEqual(entries[foo_index]['fields']['value'], 2.50)
+        self.assertEqual(entries[bar_index]['measurement'], 'sum_bar')
+        self.assertEqual(entries[bar_index]['time'],
+                         '1970-01-01T00:00:00+00:00')
+        self.assertEqual(entries[bar_index]['fields']['value'], 4.50)
+
     @mock.patch('minflux.json.reader')
     def test_archive_single_file_custom_dir(self, mock_reader):
         """Verify we don't cause errors in this mode."""
@@ -198,7 +202,7 @@ class TestJsonify(unittest.TestCase):
             }
         }
         body = json.jsonify(config, '/foo.csv')
-        self.assertEqual(len(body), 7)
+        self.assertEqual(len(body), 6)
 
     @mock.patch('minflux.json.reader')
     def test_archive_dir_custom_dir(self, mock_reader):
@@ -213,7 +217,7 @@ class TestJsonify(unittest.TestCase):
             }
         }
         body = json.jsonify(config, '/foo/bar.csv')
-        self.assertEqual(len(body), 7)
+        self.assertEqual(len(body), 6)
 
     @mock.patch('minflux.json.reader')
     def test_no_archive_dir(self, mock_reader):
@@ -222,8 +226,77 @@ class TestJsonify(unittest.TestCase):
         config = {
             'mint': {
                 'directory': '/foo',
-                'archive': {}
+                'archive': None
             }
         }
         body = json.jsonify(config, '/foo/bar.csv')
-        self.assertEqual(len(body), 7)
+        self.assertEqual(len(body), 6)
+
+
+class TestJsonData(unittest.TestCase):
+    """Verifies functionality of JsonData class."""
+
+    def setUp(self):
+        """Sets up the TestJsonData unit."""
+        self.headers = {
+            'description': 0,
+            'category': 1,
+            'account_name': 2,
+            'labels': 3,
+            'notes': 4,
+            'date': 5,
+            'transaction_type': 6,
+            'amount': 7
+        }
+        self.config_no_netsum = {}
+        self.config_netsum = {'net_sum': None}
+        self.config_netsum_exclude = {
+            'net_sum': {
+                'exclude': {
+                    'category': 'foobar'
+                }
+            }
+        }
+        self.test_entry = ['desc', 'cat', 'acc', 'lab',
+                           'note', '1/1/1970', 'credit', '1.00']
+        self.Json = json.JsonData(self.config_no_netsum, self.headers)
+        self.JsonNetSum = json.JsonData(self.config_netsum, self.headers)
+        self.JsonExclude = json.JsonData(self.config_netsum_exclude,
+                                         self.headers)
+
+    def tearDown(self):
+        """Tears down the TestJsonData unit."""
+        self.config_no_netsum = None
+        self.config_netsum = None
+        self.config_netsum_exclude = None
+        self.Json = None
+        self.JsonNetSum = None
+        self.JsonExclude = None
+
+    def test_measurement_create(self):
+        """Tests the measurement creation of the JsonData class."""
+        meas_category = self.Json.create_measurement(self.test_entry,
+                                                     'category')
+        meas_vendor = self.Json.create_measurement(self.test_entry,
+                                                   'vendor')
+        meas_account = self.Json.create_measurement(self.test_entry,
+                                                    'account')
+        self.assertEqual(meas_account, self.test_entry[2])
+        self.assertEqual(meas_vendor, self.test_entry[0])
+        self.assertEqual(meas_category, self.test_entry[1])
+
+    def test_tag_create(self):
+        """Tests the tag creation of the JsonData class."""
+        tag_list = ['vendor', 'category', 'account']
+        tag_dict = dict()
+        for tag in tag_list:
+            tag_dict[tag] = self.Json.create_tags(self.test_entry,
+                                                  tag)
+            self.assertTrue(tag not in tag_dict[tag])
+
+    def test_netsum_logic(self):
+        """Tests the logic to generate net_sum within the JsonData class."""
+        self.assertTrue(self.JsonNetSum.add_net_sum_measure)
+        self.assertFalse(self.JsonNetSum.check_net_sum_exclusion)
+        self.assertTrue(self.JsonExclude.add_net_sum_measure)
+        self.assertTrue(self.JsonExclude.check_net_sum_exclusion)

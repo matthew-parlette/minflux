@@ -43,5 +43,5 @@ class InfluxClient(object):
 
     def write_data(self, data):
         """Wrapper for influxdb writes."""
-        LOGGER.debug("Writing to %s as %s: %s", self.dbname, self.user, data)
+        LOGGER.debug("Writing to %s as %s", self.dbname, self.user)
         self.client.write_points(data)

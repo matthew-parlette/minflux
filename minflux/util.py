@@ -1,10 +1,10 @@
 """Various helper functions for minflux."""
+import os
 import logging
 from typing import Any, Union, TypeVar, Sequence
-from datetime import datetime
+from dateutil import parser, tz
 import coloredlogs
 import voluptuous as vol
-import pytz
 
 # typing typevar
 T = TypeVar('T')
@@ -12,9 +12,14 @@ T = TypeVar('T')
 LOGGER = logging.getLogger(__name__)
 
 
-def date_to_iso(date):
-    """Converts timestamp to ISO 8601."""
-    dtobj = pytz.utc.localize(datetime.strptime(date, '%m/%d/%Y'))
+def date_to_iso(date, month_only=False):
+    """Converts timestamp to RFC3339 format."""
+    if month_only:
+        new_date = date.split('/')
+        new_date[1] = '1'
+        date = '/'.join(new_date)
+    dtobj = parser.parse(date)
+    dtobj = dtobj.replace(tzinfo=tz.tzutc())
     return dtobj.isoformat()
 
 
@@ -39,6 +44,10 @@ def set_loggers(logger, file=None, level='info'):
         'critical': logging.CRITICAL
     }
     if file:
+        try:
+            os.remove(file)
+        except OSError:
+            pass
         handler = logging.FileHandler(file)
         handler.setLevel(level_dict[level])
         formatter = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
