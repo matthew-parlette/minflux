@@ -51,7 +51,10 @@ class JsonData(object):
         tag_dict = {
             'vendor': entry[self.headers[ATTR_DESC]],
             'category': entry[self.headers[ATTR_CATEGORY]],
-            'account': entry[self.headers[ATTR_ACCOUNT]]
+            'account': entry[self.headers[ATTR_ACCOUNT]],
+            'raw_date': entry[self.headers[ATTR_DATE]],
+            'label': entry[self.headers[ATTR_LABELS]],
+            'notes': entry[self.headers[ATTR_NOTES]],
         }
         tag_dict.pop(measurement, None)
 
@@ -59,9 +62,6 @@ class JsonData(object):
 
     def create_entry(self, entry, date):
         """Creates a generic json data set."""
-        self.json_entry['tags']['label'] = entry[self.headers[ATTR_LABELS]]
-        self.json_entry['tags']['notes'] = entry[self.headers[ATTR_NOTES]]
-        self.json_entry['tags']['raw_date'] = entry[self.headers[ATTR_DATE]]
         self.json_entry['time'] = date
 
     def create_value_entry(self, value_dict):
@@ -110,6 +110,7 @@ def jsonify(config, csvfile):
             json_data.json_entry['measurement'] = measure_name
             tag_dict = json_data.create_tags(entry, measurement)
             json_data.json_entry['tags'] = tag_dict
+            LOGGER.debug("Generating data for %s", measure_name)
             json_data.create_value_entry(value_dict)
             json_data.body.append(json_data.json_entry.copy())
 
@@ -149,27 +150,27 @@ def get_sum_of_entries(body):
     all_measures = dict()
     for entry in body:
         key = entry['measurement']
+        if key not in all_measures:
+            all_measures[key] = list()
         try:
             value = [
                 entry['tags']['raw_date'],
                 entry['fields']['value']
             ]
-            try:
-                all_measures[key].append(value)
-            except KeyError:
-                all_measures[key] = [value]
+            all_measures[key].append(value)
         except KeyError:
             pass
     new_entries = []
     for key, entries in all_measures.items():
         val = 0
+        LOGGER.debug("%s", entries)
         for entry in entries:
             iso_date = util.date_to_iso(entry[0], month_only=True)
-            LOGGER.debug("Using date for sum of %s", iso_date)
             val += entry[1]
-
+        entry_name = 'sum_{}'.format(key)
+        LOGGER.debug("Creating %s", entry_name)
         sum_entry = {
-            'measurement': 'sum_{}'.format(key),
+            'measurement': entry_name,
             'time': iso_date,
             'fields': {
                 'value': val

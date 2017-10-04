@@ -76,7 +76,7 @@ def main():
         LOGGER.debug("Using source dir %s", source)
         status = True
         for file in glob.glob('{}/*.csv'.format(source)):
-            LOGGER.debug("Found %s", file)
+            LOGGER.info("Found %s", file)
             result = dbwrite.influxdb_write(config, db_client,
                                             file, db_skip=args[ARG_NOPUSH])
             if not result:
