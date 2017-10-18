@@ -74,8 +74,12 @@ def main():
     except KeyError:
         source = config[CONF_MINT][CONF_DIR]
         LOGGER.debug("Using source dir %s", source)
+        filelist = glob.glob('{}/*.csv'.format(source))
+        if not filelist:
+            LOGGER.warning("No csv files found")
+            sys.exit(2)
         status = True
-        for file in glob.glob('{}/*.csv'.format(source)):
+        for file in filelist:
             LOGGER.info("Found %s", file)
             result = dbwrite.influxdb_write(config, db_client,
                                             file, db_skip=args[ARG_NOPUSH])
